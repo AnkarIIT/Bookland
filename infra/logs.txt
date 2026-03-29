@@ -1,0 +1,197 @@
+﻿bookland-frontend  | npm warn deprecated glob@7.2.3: Old versions of glob are not supported, and contain widely publicized security vulnerabilities, which have been fixed in the current version. Please update. Support for old versions may be purchased (at exorbitant rates) by contacting i@izs.me
+bookland-frontend  | npm warn deprecated inflight@1.0.6: This module is not supported, and leaks memory. Do not use it. Check out lru-cache if you want a good and tested way to coalesce async requests by a key value, which is much more comprehensive and powerful.
+bookland-frontend  | npm warn deprecated rimraf@3.0.2: Rimraf versions prior to v4 are no longer supported
+bookland-frontend  | npm warn deprecated @humanwhocodes/object-schema@2.0.3: Use @eslint/object-schema instead
+bookland-frontend  | npm warn deprecated @humanwhocodes/config-array@0.13.0: Use @eslint/config-array instead
+bookland-frontend  | npm warn deprecated eslint@8.57.1: This version is no longer supported. Please see https://eslint.org/version-support for other options.
+bookland-frontend  | 
+bookland-frontend  | added 252 packages, and audited 253 packages in 2m
+bookland-frontend  | 
+bookland-frontend  | 57 packages are looking for funding
+bookland-frontend  |   run `npm fund` for details
+bookland-frontend  | 
+bookland-frontend  | 2 moderate severity vulnerabilities
+bookland-frontend  | 
+bookland-frontend  | To address all issues (including breaking changes), run:
+bookland-frontend  |   npm audit fix --force
+bookland-frontend  | 
+bookland-frontend  | Run `npm audit` for details.
+bookland-frontend  | npm notice
+bookland-frontend  | npm notice New major version of npm available! 10.8.2 -> 11.12.1
+bookland-redis     | Starting Redis Server
+bookland-redis     | 1:C 29 Mar 2026 20:10:51.955 * oO0OoO0OoO0Oo Redis is starting oO0OoO0OoO0Oo
+bookland-redis     | 1:C 29 Mar 2026 20:10:51.955 * Redis version=8.6.2, bits=64, commit=00000000, modified=1, pid=1, just started
+bookland-redis     | 1:C 29 Mar 2026 20:10:51.955 * Configuration loaded
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.956 * monotonic clock: POSIX clock_gettime
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.958 * Running mode=standalone, port=6379.
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.959 * <bf> RedisBloom version 8.6.0 (Git=unknown)
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.959 * <bf> Registering configuration options: [
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.959 * <bf> 	{ bf-error-rate       :      0.01 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.959 * <bf> 	{ bf-initial-size     :       100 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.959 * <bf> 	{ bf-expansion-factor :         2 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.960 * <bf> 	{ cf-bucket-size      :         2 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.960 * <bf> 	{ cf-initial-size     :      1024 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.960 * <bf> 	{ cf-max-iterations   :        20 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.960 * <bf> 	{ cf-expansion-factor :         1 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.960 * <bf> 	{ cf-max-expansions   :        32 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.960 * <bf> ]
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.961 * Module 'bf' loaded from /usr/local/lib/redis/modules//redisbloom.so
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Redis version found by RedisSearch : 8.6.2 - oss
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> RediSearch version 8.6.0 (Git=7782b97)
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Low level api version 1 initialized successfully
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> gc: ON, prefix min length: 2, min word length to stem: 4, prefix max expansions: 200, query timeout (ms): 500, timeout policy: return, oom policy: return, cursor read size: 1000, cursor max idle (ms): 300000, max doctable size: 1000000, max number of search results:  1000000, default scorer: BM25STD, 
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Initialized thread pools!
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Disabled workers threadpool of size 0
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Subscribe to config changes
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Subscribe to cluster slot migration events
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.971 * <search> Enabled role change notification
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.972 * <search> Cluster configuration: AUTO partitions, type: 0, coordinator timeout: 0ms
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.972 * Module 'search' loaded from /usr/local/lib/redis/modules//redisearch.so
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> RedisTimeSeries version 80600, git_sha=05fd355db748676861dc4c17d19c8c1ca74c0154
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> Redis version found by RedisTimeSeries : 8.6.2 - oss
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> Registering configuration options: [
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-compaction-policy   :              }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-num-threads         :            3 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-retention-policy    :            0 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-duplicate-policy    :        block }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-chunk-size-bytes    :         4096 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-encoding            :   compressed }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-ignore-max-time-diff:            0 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> 	{ ts-ignore-max-val-diff :     0.000000 }
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> ]
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.973 * <timeseries> Detected redis oss
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.974 * <timeseries> Subscribe to ASM events
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.974 * <timeseries> Enabled diskless replication
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.974 * Module 'timeseries' loaded from /usr/local/lib/redis/modules//redistimeseries.so
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.976 * <ReJSON> Created new data type 'ReJSON-RL'
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> version: 80600 git sha: unknown branch: unknown
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Exported RedisJSON_V1 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Exported RedisJSON_V2 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Exported RedisJSON_V3 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Exported RedisJSON_V4 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Exported RedisJSON_V5 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Exported RedisJSON_V6 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Enabled diskless replication
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.978 * <ReJSON> Initialized shared string cache, thread safe: true.
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.979 * Module 'ReJSON' loaded from /usr/local/lib/redis/modules//rejson.so
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.979 * <search> Acquired RedisJSON_V6 API
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.981 * Server initialized
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.981 * Ready to accept connections tcp
+bookland-redis     | 1:M 29 Mar 2026 20:10:51.981 # WARNING: Redis does not require authentication and is not protected by network restrictions. Redis will accept connections from any IP address on any network interface.
+bookland-frontend  | npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.12.1
+bookland-frontend  | npm notice To update run: npm install -g npm@11.12.1
+bookland-frontend  | npm notice
+bookland-frontend  | 
+bookland-frontend  | > bookland-client@1.0.0 dev
+bookland-frontend  | > vite --host 0.0.0.0
+bookland-frontend  | 
+bookland-frontend  | 
+bookland-frontend  |   VITE v5.4.21  ready in 1637 ms
+bookland-frontend  | 
+bookland-frontend  |   ➜  Local:   http://localhost:5173/
+bookland-frontend  |   ➜  Network: http://172.18.0.6:5173/
+bookland-backend   | 
+bookland-backend   | added 123 packages, and audited 124 packages in 34s
+bookland-backend   | 
+bookland-backend   | 22 packages are looking for funding
+bookland-backend   |   run `npm fund` for details
+bookland-backend   | 
+bookland-backend   | found 0 vulnerabilities
+bookland-backend   | npm notice
+bookland-backend   | npm notice New major version of npm available! 10.8.2 -> 11.12.1
+bookland-backend   | npm notice Changelog: https://github.com/npm/cli/releases/tag/v11.12.1
+bookland-backend   | npm notice To update run: npm install -g npm@11.12.1
+bookland-backend   | npm notice
+bookland-backend   | 
+bookland-backend   | > bookland-server@1.0.0 dev
+bookland-backend   | > nodemon src/index.js
+bookland-backend   | 
+bookland-backend   | [33m[nodemon] 3.1.14[39m
+bookland-backend   | [33m[nodemon] to restart at any time, enter `rs`[39m
+bookland-backend   | [33m[nodemon] watching path(s): *.*[39m
+bookland-backend   | [33m[nodemon] watching extensions: js,mjs,cjs,json[39m
+bookland-backend   | [32m[nodemon] starting `node src/index.js`[39m
+bookland-backend   | Backend service listening on port 3001
+bookland-backend   | Redis Client Connected
+bookland-postgres  | The files belonging to this database system will be owned by user "postgres".
+bookland-postgres  | This user must also own the server process.
+bookland-postgres  | 
+bookland-postgres  | The database cluster will be initialized with locale "en_US.utf8".
+bookland-postgres  | The default database encoding has accordingly been set to "UTF8".
+bookland-postgres  | The default text search configuration will be set to "english".
+bookland-postgres  | 
+bookland-postgres  | Data page checksums are disabled.
+bookland-postgres  | 
+bookland-postgres  | fixing permissions on existing directory /var/lib/postgresql/data ... ok
+bookland-postgres  | creating subdirectories ... ok
+bookland-postgres  | selecting dynamic shared memory implementation ... posix
+bookland-postgres  | selecting default max_connections ... 100
+bookland-postgres  | selecting default shared_buffers ... 128MB
+bookland-postgres  | selecting default time zone ... Etc/UTC
+bookland-postgres  | creating configuration files ... ok
+bookland-postgres  | running bootstrap script ... ok
+bookland-postgres  | performing post-bootstrap initialization ... ok
+bookland-postgres  | syncing data to disk ... ok
+bookland-postgres  | 
+bookland-postgres  | 
+bookland-postgres  | Success. You can now start the database server using:
+bookland-postgres  | 
+bookland-postgres  |     pg_ctl -D /var/lib/postgresql/data -l logfile start
+bookland-postgres  | 
+bookland-postgres  | initdb: warning: enabling "trust" authentication for local connections
+bookland-postgres  | initdb: hint: You can change this by editing pg_hba.conf or using the option -A, or --auth-local and --auth-host, the next time you run initdb.
+bookland-postgres  | waiting for server to start....2026-03-29 20:10:53.406 UTC [48] LOG:  starting PostgreSQL 15.4 (Debian 15.4-2.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+bookland-postgres  | 2026-03-29 20:10:53.409 UTC [48] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+bookland-postgres  | 2026-03-29 20:10:53.419 UTC [51] LOG:  database system was shut down at 2026-03-29 20:10:52 UTC
+bookland-postgres  | 2026-03-29 20:10:53.426 UTC [48] LOG:  database system is ready to accept connections
+bookland-postgres  |  done
+bookland-postgres  | server started
+bookland-postgres  | CREATE DATABASE
+bookland-postgres  | 
+bookland-postgres  | 
+bookland-postgres  | /usr/local/bin/docker-entrypoint.sh: running /docker-entrypoint-initdb.d/init.sql
+bookland-postgres  | CREATE EXTENSION
+bookland-postgres  | CREATE TABLE
+bookland-postgres  | CREATE TABLE
+bookland-postgres  | CREATE TABLE
+bookland-postgres  | CREATE TABLE
+bookland-postgres  | CREATE TABLE
+bookland-postgres  | CREATE INDEX
+bookland-postgres  | CREATE INDEX
+bookland-postgres  | CREATE INDEX
+bookland-postgres  | CREATE INDEX
+bookland-postgres  | 
+bookland-postgres  | 
+bookland-postgres  | waiting for server to shut down...2026-03-29 20:10:53.883 UTC [48] LOG:  received fast shutdown request
+bookland-postgres  | .2026-03-29 20:10:53.888 UTC [48] LOG:  aborting any active transactions
+bookland-postgres  | 2026-03-29 20:10:53.891 UTC [48] LOG:  background worker "logical replication launcher" (PID 54) exited with exit code 1
+bookland-postgres  | 2026-03-29 20:10:53.891 UTC [49] LOG:  shutting down
+bookland-postgres  | 2026-03-29 20:10:53.895 UTC [49] LOG:  checkpoint starting: shutdown immediate
+bookland-postgres  | 2026-03-29 20:10:54.124 UTC [49] LOG:  checkpoint complete: wrote 944 buffers (5.8%); 0 WAL file(s) added, 0 removed, 0 recycled; write=0.026 s, sync=0.191 s, total=0.233 s; sync files=324, longest=0.013 s, average=0.001 s; distance=4457 kB, estimate=4457 kB
+bookland-postgres  | 2026-03-29 20:10:54.131 UTC [48] LOG:  database system is shut down
+bookland-postgres  |  done
+bookland-postgres  | server stopped
+bookland-postgres  | 
+bookland-postgres  | PostgreSQL init process complete; ready for start up.
+bookland-postgres  | 
+bookland-postgres  | 2026-03-29 20:10:54.218 UTC [1] LOG:  starting PostgreSQL 15.4 (Debian 15.4-2.pgdg120+1) on x86_64-pc-linux-gnu, compiled by gcc (Debian 12.2.0-14) 12.2.0, 64-bit
+bookland-postgres  | 2026-03-29 20:10:54.219 UTC [1] LOG:  listening on IPv4 address "0.0.0.0", port 5432
+bookland-postgres  | 2026-03-29 20:10:54.219 UTC [1] LOG:  listening on IPv6 address "::", port 5432
+bookland-postgres  | 2026-03-29 20:10:54.225 UTC [1] LOG:  listening on Unix socket "/var/run/postgresql/.s.PGSQL.5432"
+bookland-postgres  | 2026-03-29 20:10:54.233 UTC [66] LOG:  database system was shut down at 2026-03-29 20:10:54 UTC
+bookland-postgres  | 2026-03-29 20:10:54.243 UTC [1] LOG:  database system is ready to accept connections
+bookland-pgadmin   | email config is {'CHECK_EMAIL_DELIVERABILITY': False, 'ALLOW_SPECIAL_EMAIL_DOMAINS': [], 'GLOBALLY_DELIVERABLE': True}
+bookland-pgadmin   | /venv/lib/python3.14/site-packages/sshtunnel.py:1040: SyntaxWarning: 'return' in a 'finally' block
+bookland-pgadmin   |   return (ssh_host,
+bookland-pgadmin   | NOTE: Configuring authentication for SERVER mode.
+bookland-pgadmin   | 
+bookland-pgadmin   | pgAdmin 4 - Application Initialisation
+bookland-pgadmin   | ======================================
+bookland-pgadmin   | 
+bookland-pgadmin   | postfix/postlog: starting the Postfix mail system
+bookland-pgadmin   | [2026-03-29 20:12:01 +0000] [1] [INFO] Starting gunicorn 23.0.0
+bookland-pgadmin   | [2026-03-29 20:12:01 +0000] [1] [INFO] Listening at: http://[::]:80 (1)
+bookland-pgadmin   | [2026-03-29 20:12:01 +0000] [1] [INFO] Using worker: gthread
+bookland-pgadmin   | [2026-03-29 20:12:01 +0000] [123] [INFO] Booting worker with pid: 123
+bookland-pgadmin   | /venv/lib/python3.14/site-packages/sshtunnel.py:1040: SyntaxWarning: 'return' in a 'finally' block
+bookland-pgadmin   |   return (ssh_host,

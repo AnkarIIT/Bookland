@@ -1,0 +1,6 @@
+﻿NAME                IMAGE                    COMMAND                  SERVICE    CREATED         STATUS                   PORTS
+bookland-backend    node:20-alpine           "docker-entrypoint.s…"   backend    2 minutes ago   Up 2 minutes             0.0.0.0:3001->3001/tcp, [::]:3001->3001/tcp
+bookland-frontend   node:20-alpine           "docker-entrypoint.s…"   frontend   2 minutes ago   Up 2 minutes             0.0.0.0:5173->5173/tcp, [::]:5173->5173/tcp
+bookland-pgadmin    dpage/pgadmin4           "/entrypoint.sh"         pgadmin    2 minutes ago   Up 2 minutes             0.0.0.0:5050->80/tcp, [::]:5050->80/tcp
+bookland-postgres   ankane/pgvector:latest   "docker-entrypoint.s…"   postgres   2 minutes ago   Up 2 minutes (healthy)   0.0.0.0:5432->5432/tcp, [::]:5432->5432/tcp
+bookland-redis      redis:alpine             "docker-entrypoint.s…"   redis      2 minutes ago   Up 2 minutes (healthy)   0.0.0.0:6379->6379/tcp, [::]:6379->6379/tcp
