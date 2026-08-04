@@ -10,10 +10,11 @@ CREATE TABLE IF NOT EXISTS users (
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP
 );
 
--- Core books table
+-- Core books table (Gutenberg books may have no ISBN; content caches full reader text)
 CREATE TABLE IF NOT EXISTS books (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    isbn_13 VARCHAR(13) UNIQUE NOT NULL,
+    isbn_13 VARCHAR(13) UNIQUE,
+    gutenberg_id INTEGER UNIQUE,
     isbn_10 VARCHAR(10),
     title TEXT NOT NULL,
     subtitle TEXT,
@@ -29,6 +30,9 @@ CREATE TABLE IF NOT EXISTS books (
     cover_url TEXT,
     is_free BOOLEAN DEFAULT false,
     read_url TEXT,
+    archive_id TEXT,
+    content TEXT,
+    content_url TEXT,
     file_path TEXT,
     source VARCHAR(50),
     created_at TIMESTAMP WITH TIME ZONE DEFAULT CURRENT_TIMESTAMP,
@@ -65,7 +69,9 @@ CREATE TABLE IF NOT EXISTS saved_books (
 );
 
 -- Indexes for performance
-CREATE INDEX idx_books_isbn_13 ON books(isbn_13);
-CREATE INDEX idx_books_title ON books USING gin(to_tsvector('english', title));
-CREATE INDEX idx_books_authors ON books USING gin(authors);
-CREATE INDEX idx_books_genre ON books USING gin(genre);
+CREATE INDEX IF NOT EXISTS idx_books_isbn_13 ON books(isbn_13);
+CREATE INDEX IF NOT EXISTS idx_books_gutenberg_id ON books(gutenberg_id);
+CREATE INDEX IF NOT EXISTS idx_books_source ON books(source);
+CREATE INDEX IF NOT EXISTS idx_books_title ON books USING gin(to_tsvector('english', title));
+CREATE INDEX IF NOT EXISTS idx_books_authors ON books USING gin(authors);
+CREATE INDEX IF NOT EXISTS idx_books_genre ON books USING gin(genre);

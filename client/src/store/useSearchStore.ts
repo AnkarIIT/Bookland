@@ -1,24 +1,39 @@
 import { create } from 'zustand';
 import type { Book } from '../types';
 
+export type ContentType = 'all' | 'book' | 'paper' | 'article';
+
 interface SearchState {
   searchQuery: string;
+  contentType: ContentType;
   results: Book[];
   isLoading: boolean;
   error: string | null;
   setSearchQuery: (query: string) => void;
+  setContentType: (type: ContentType) => void;
   performSearch: (query: string) => Promise<void>;
 }
 
 let activeController: AbortController | null = null;
 
-export const useSearchStore = create<SearchState>((set) => ({
+export const useSearchStore = create<SearchState>((set, get) => ({
   searchQuery: '',
+  contentType: 'all',
   results: [],
   isLoading: false,
   error: null,
   setSearchQuery: (query) => set({ searchQuery: query }),
+  setContentType: (type) => set({ contentType: type, results: [], error: null }),
+
   performSearch: async (query) => {
+    const { contentType } = get();
+
+    // Papers & articles aren't indexed yet — show an honest empty state
+    if (contentType === 'paper' || contentType === 'article') {
+      set({ searchQuery: query, results: [], isLoading: false, error: null });
+      return;
+    }
+
     if (activeController) {
       activeController.abort();
     }

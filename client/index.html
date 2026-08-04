@@ -4,7 +4,8 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Bookland - Infrastructure for Knowledge</title>
+    <meta name="theme-color" content="#f5f5f7" />
+    <title>Bookland — Books, Papers & Articles</title>
     <script>
       (function () {
         try {
@@ -14,11 +15,12 @@
             theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
           }
           document.documentElement.classList.add(theme);
+          document.documentElement.style.backgroundColor = theme === 'dark' ? '#000000' : '#f5f5f7';
         } catch (e) {}
       })();
     </script>
   </head>
-  <body class="bg-slate-50 dark:bg-slate-950 text-ink font-sans antialiased min-h-screen">
+  <body class="bg-canvas text-ink font-sans antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

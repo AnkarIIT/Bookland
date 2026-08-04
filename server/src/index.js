@@ -5,8 +5,10 @@ const cors = require('cors');
 const searchRoutes = require('./routes/search');
 const bookRoutes = require('./routes/books');
 const authRoutes = require('./routes/auth');
+const readRoutes = require('./routes/read');
 const { connectRedis, closeRedis } = require('./config/redis');
 const { closePool } = require('./config/db');
+const { runMigrations } = require('./config/migrate');
 
 const app = express();
 const port = process.env.PORT || 3001;
@@ -19,6 +21,7 @@ app.use(express.json());
 app.use('/api/search', searchRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', authRoutes);
+app.use('/api/read', readRoutes);
 
 // Health check endpoint
 app.get('/health', (req, res) => {
@@ -39,21 +42,24 @@ app.use((err, req, res, next) => {
 // Redis is optional — server should still boot if it is unavailable
 connectRedis().catch(() => {});
 
-const server = app.listen(port, () => {
-  console.log(`Backend service listening on port ${port}`);
-});
-
-const shutdown = async (signal) => {
-  console.log(`${signal} received, shutting down gracefully...`);
-  server.close(async () => {
-    await closeRedis().catch(() => {});
-    await closePool().catch(() => {});
-    process.exit(0);
+// Apply idempotent schema migrations before serving (best-effort; DB may be down)
+runMigrations().finally(() => {
+  const server = app.listen(port, () => {
+    console.log(`Backend service listening on port ${port}`);
   });
-  setTimeout(() => process.exit(1), 10000).unref();
-};
 
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('SIGTERM', () => shutdown('SIGTERM'));
+  const shutdown = async (signal) => {
+    console.log(`${signal} received, shutting down gracefully...`);
+    server.close(async () => {
+      await closeRedis().catch(() => {});
+      await closePool().catch(() => {});
+      process.exit(0);
+    });
+    setTimeout(() => process.exit(1), 10000).unref();
+  };
+
+  process.on('SIGINT', () => shutdown('SIGINT'));
+  process.on('SIGTERM', () => shutdown('SIGTERM'));
+});
 
 module.exports = app;

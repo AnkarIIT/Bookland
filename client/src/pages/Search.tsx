@@ -1,120 +1,174 @@
 import React, { useEffect, useState } from 'react';
-import { useSearchStore } from '../store/useSearchStore';
+import { useSearchStore, type ContentType } from '../store/useSearchStore';
 import BookCard from '../components/BookCard';
-import { SearchIcon, Info, Library } from 'lucide-react';
+import SegmentedControl from '../components/SegmentedControl';
+import { Search as SearchIcon, Info, Library, FlaskConical, Newspaper, ArrowLeft } from 'lucide-react';
+
+const TYPE_OPTIONS: { value: ContentType; label: string }[] = [
+  { value: 'all', label: 'Everything' },
+  { value: 'book', label: 'Books' },
+  { value: 'paper', label: 'Papers' },
+  { value: 'article', label: 'Articles' },
+];
+
+const COMING_SOON: Record<Exclude<ContentType, 'all' | 'book'>, { title: string; description: string }> = {
+  paper: {
+    title: 'Research papers, on the way',
+    description: 'We\'re connecting to open-access repositories (arXiv, PubMed, DOAJ) so you can search and read peer-reviewed research. Papers arrive in an upcoming release.',
+  },
+  article: {
+    title: 'Articles & essays, on the way',
+    description: 'Editorial content, long-form journalism and essays from open archives will be indexed here soon. Check back shortly.',
+  },
+};
 
 const Search = () => {
-  const { searchQuery, results, isLoading, error, performSearch, setSearchQuery } = useSearchStore();
+  const { searchQuery, contentType, results, isLoading, error, performSearch, setSearchQuery, setContentType } = useSearchStore();
   const [localQuery, setLocalQuery] = useState(searchQuery);
 
-  // If component mounts and we have a query in store but no results/loading, trigger search
+  // Auto-search when landing with a query already set
   useEffect(() => {
-    if (searchQuery && results.length === 0 && !isLoading && !error) {
+    if (searchQuery && results.length === 0 && !isLoading && !error && (contentType === 'all' || contentType === 'book')) {
       performSearch(searchQuery);
     }
-  }, [searchQuery, results.length, isLoading, error, performSearch]);
+  }, [searchQuery, results.length, isLoading, error, contentType, performSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
-    if (localQuery.trim()) {
-      setSearchQuery(localQuery.trim());
+    if (!localQuery.trim()) return;
+    setSearchQuery(localQuery.trim());
+    performSearch(localQuery.trim());
+  };
+
+  const handleTypeChange = (type: ContentType) => {
+    setContentType(type);
+    if (localQuery.trim() && (type === 'all' || type === 'book')) {
       performSearch(localQuery.trim());
     }
   };
 
+  const comingSoon = contentType === 'paper' || contentType === 'article' ? COMING_SOON[contentType] : null;
+  const showComingSoon = comingSoon !== null;
+  const heading = searchQuery ? `Results for “${searchQuery}”` : 'Explore the archive';
+
   return (
-    <div className="w-full max-w-7xl mx-auto">
-      <div className="mb-12">
-        <form onSubmit={handleSearch} className="relative group max-w-4xl">
-          <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-indigo-500 rounded-2xl blur opacity-10 group-focus-within:opacity-25 transition-opacity duration-500"></div>
-          <div className="relative flex shadow-premium rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 focus-within:border-primary-500/50 transition-all bg-white dark:bg-slate-900">
+    <div className="animate-fade-up">
+      {/* Search bar */}
+      <div className="sticky top-14 z-40 -mx-5 sm:-mx-8 px-5 sm:px-8 py-4 bg-canvas/85 dark:bg-dark-canvas/85 backdrop-blur-2xl">
+        <form onSubmit={handleSearch} className="max-w-2xl">
+          <div className="relative">
+            <SearchIcon size={19} className="absolute left-5 top-1/2 -translate-y-1/2 text-muted" />
             <input
               type="text"
-              className="w-full p-5 pl-7 outline-none text-lg font-medium text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent"
               placeholder="Search books by title, author, or ISBN..."
               value={localQuery}
               onChange={(e) => setLocalQuery(e.target.value)}
+              className="input-base py-3.5 pr-24 text-[16px] shadow-soft"
+              style={{ paddingLeft: '3rem' }}
             />
-            <button type="submit" className="bg-primary-600 text-white px-10 hover:bg-primary-700 transition-all flex items-center justify-center active:scale-95">
-              <SearchIcon size={24} strokeWidth={2.5} />
+            <button
+              type="submit"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-600 text-white text-sm font-semibold px-5 py-2 rounded-full hover:bg-primary-700 transition-all active:scale-95"
+            >
+              Search
             </button>
+          </div>
+          <div className="mt-3">
+            <SegmentedControl size="sm" options={TYPE_OPTIONS} value={contentType} onChange={handleTypeChange} />
           </div>
         </form>
       </div>
 
-      <div className="mb-10 flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-slate-200 pb-6">
-        <div>
-          <h2 className="text-3xl font-display font-extrabold text-slate-900 tracking-tight">
-            {searchQuery ? `Results for "${searchQuery}"` : 'Global Catalog'}
-          </h2>
-          <p className="text-slate-500 font-medium mt-1">
-            Accessing decentralized book data via Open Library API
-          </p>
-        </div>
-        {!isLoading && results.length > 0 && searchQuery && (
-          <div className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full border border-primary-100 text-sm font-bold shadow-sm">
-            <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
-            {results.length} volumes identified
-          </div>
+      {/* Heading */}
+      <div className="flex items-center justify-between mt-8 mb-4">
+        <h1 className="font-display font-bold text-2xl md:text-3xl tracking-tight text-ink dark:text-white">
+          {heading}
+        </h1>
+        {!isLoading && !showComingSoon && results.length > 0 && (
+          <span className="text-sm font-semibold text-muted dark:text-dark-muted">
+            {results.length} results
+          </span>
         )}
       </div>
 
-      {error ? (
-        <div className="bg-white p-12 rounded-3xl border border-slate-200 shadow-premium flex flex-col items-center justify-center min-h-[40vh] text-center max-w-2xl mx-auto">
-          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-6 border border-red-100">
-            <Info size={40} />
+      {/* Coming soon: papers / articles */}
+      {showComingSoon && (
+        <div className="flex flex-col items-center justify-center text-center py-20">
+          <div className="w-16 h-16 rounded-2xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center mb-6">
+            {contentType === 'paper' ? <FlaskConical size={30} /> : <Newspaper size={30} />}
           </div>
-          <h3 className="text-2xl font-display font-extrabold text-slate-900 mb-3">Transmission Failed</h3>
-          <p className="text-slate-500 font-medium text-lg leading-relaxed">{error}</p>
-          <button 
-            onClick={() => performSearch(searchQuery)}
-            className="mt-8 bg-slate-900 text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-all active:scale-95"
-          >
-            Retry Connection
+          <h2 className="font-display font-bold text-2xl text-ink dark:text-white">{comingSoon.title}</h2>
+          <p className="mt-3 max-w-md text-muted dark:text-dark-muted font-medium leading-relaxed">
+            {comingSoon.description}
+          </p>
+          <button onClick={() => handleTypeChange('book')} className="btn-secondary mt-8">
+            <ArrowLeft size={16} /> Explore books instead
           </button>
         </div>
-      ) : isLoading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-8">
-          {[...Array(10)].map((_, i) => (
-            <div key={i} className="flex flex-col bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-[420px]">
-              <div className="h-2/3 skeleton-shimmer w-full"></div>
-              <div className="flex-1 p-6 flex flex-col gap-4">
-                <div className="h-5 skeleton-shimmer rounded-full w-full"></div>
-                <div className="h-4 skeleton-shimmer rounded-full w-2/3 mb-auto opacity-60"></div>
-                <div className="flex justify-between items-center pt-4 border-t border-slate-100">
-                  <div className="h-5 skeleton-shimmer rounded w-12 opacity-40"></div>
-                  <div className="h-5 skeleton-shimmer rounded w-24 opacity-40"></div>
-                </div>
+      )}
+
+      {/* Error */}
+      {!showComingSoon && error && (
+        <div className="flex flex-col items-center text-center py-20">
+          <div className="w-16 h-16 rounded-2xl bg-red-50 text-red-500 flex items-center justify-center mb-6">
+            <Info size={30} />
+          </div>
+          <h2 className="font-display font-bold text-2xl text-ink dark:text-white">Could not reach the archive</h2>
+          <p className="mt-3 max-w-md text-muted dark:text-dark-muted font-medium">{error}</p>
+          <button onClick={() => performSearch(searchQuery)} className="btn-primary mt-8">
+            Retry
+          </button>
+        </div>
+      )}
+
+      {/* Loading */}
+      {!showComingSoon && isLoading && (
+        <div className="space-y-3 mt-2">
+          {[...Array(6)].map((_, i) => (
+            <div key={i} className="flex items-center gap-5 p-4 rounded-2xl">
+              <div className="w-14 h-20 rounded-lg skeleton shrink-0" />
+              <div className="flex-1 space-y-3">
+                <div className="h-4 skeleton rounded-full w-2/3" />
+                <div className="h-3 skeleton rounded-full w-1/3" />
+                <div className="h-3 skeleton rounded-full w-1/4" />
               </div>
             </div>
           ))}
         </div>
-      ) : results.length > 0 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-8 animate-fade-in">
+      )}
+
+      {/* Results */}
+      {!showComingSoon && !isLoading && !error && results.length > 0 && (
+        <div className="mt-2 space-y-1">
           {results.map((book) => (
-            <BookCard key={book.isbn_13} book={book} />
+            <BookCard key={book.id} book={book} />
           ))}
         </div>
-      ) : searchQuery ? (
-        <div className="text-center py-32 bg-slate-50 rounded-[3rem] border border-dashed border-slate-300 shadow-inner max-w-3xl mx-auto px-8">
-          <div className="text-7xl mb-8 block drop-shadow-sm opacity-50 grayscale">🔍</div>
-          <h3 className="text-3xl font-display font-extrabold text-slate-900 mb-4">No results in archive</h3>
-          <p className="text-xl text-slate-500 max-w-lg mx-auto text-balance leading-relaxed">
-            We couldn't find any direct matches for <strong className="font-bold text-slate-900">"{searchQuery}"</strong>. Try broadening your keywords or checking for ISBN typos.
+      )}
+
+      {/* Empty */}
+      {!showComingSoon && !isLoading && !error && results.length === 0 && searchQuery && (
+        <div className="flex flex-col items-center text-center py-20">
+          <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-dark-raised text-muted flex items-center justify-center mb-6">
+            <SearchIcon size={30} strokeWidth={1.5} />
+          </div>
+          <h2 className="font-display font-bold text-2xl text-ink dark:text-white">No matches in the archive</h2>
+          <p className="mt-3 max-w-md text-muted dark:text-dark-muted font-medium">
+            We couldn't find anything for “{searchQuery}”. Try a broader keyword, or check your spelling.
           </p>
         </div>
-      ) : (
-        <div className="text-center py-32 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[3rem] border border-slate-700 shadow-2xl relative overflow-hidden group">
-          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
-          <div className="relative z-10 px-8">
-            <div className="w-24 h-24 bg-primary-500/20 text-primary-400 rounded-[2rem] flex items-center justify-center mx-auto mb-10 border border-primary-500/30 group-hover:scale-110 transition-transform duration-500">
-              <Library size={48} strokeWidth={1.5} />
-            </div>
-            <h3 className="text-4xl font-display font-extrabold text-white mb-6 tracking-tight">Access the Global Archive</h3>
-            <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
-              Bookland connects directly to the Open Library via secure API bridge. Use the search above to explore millions of human-indexed records.
-            </p>
+      )}
+
+      {/* Initial state */}
+      {!showComingSoon && !isLoading && !error && results.length === 0 && !searchQuery && (
+        <div className="flex flex-col items-center text-center py-20">
+          <div className="w-16 h-16 rounded-2xl bg-primary-50 dark:bg-primary-500/10 text-primary-600 dark:text-primary-400 flex items-center justify-center mb-6">
+            <Library size={30} strokeWidth={1.5} />
           </div>
+          <h2 className="font-display font-bold text-2xl text-ink dark:text-white">Search the global archive</h2>
+          <p className="mt-3 max-w-md text-muted dark:text-dark-muted font-medium">
+            Millions of books from Open Library and Project Gutenberg, indexed for instant results.
+          </p>
         </div>
       )}
     </div>

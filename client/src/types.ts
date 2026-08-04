@@ -1,10 +1,19 @@
+export type BookSource = 'openlibrary' | 'gutenberg' | 'local';
+export type ReadKind = 'gutenberg' | 'archive';
+
 export interface Book {
-  isbn_13: string;
+  id: string;
+  isbn_13?: string | null;
+  gutenberg_id?: number | null;
+  archive_id?: string | null;
   title: string;
   authors: string[];
   published_year?: number | null;
   cover_url?: string | null;
-  source?: string;
+  source: BookSource;
+  readable: boolean;
+  read_kind?: ReadKind | null;
+  read_id?: string | null;
 }
 
 export interface BookDetail extends Book {
@@ -16,6 +25,19 @@ export interface BookDetail extends Book {
   page_count?: number | null;
   is_free?: boolean;
   read_url?: string | null;
+}
+
+export interface ReadResponse {
+  id: number;
+  title: string;
+  authors: string[];
+  content: string;
+}
+
+export interface ArchiveReadResponse {
+  id: string;
+  title: string | null;
+  embed_url: string;
 }
 
 export interface User {

@@ -1,43 +1,59 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Outfit:wght@500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+
   body {
-    @apply font-sans antialiased text-ink bg-slate-50;
+    @apply bg-canvas text-ink font-sans antialiased;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    @apply bg-primary-600 text-white;
+  }
+
+  :focus-visible {
+    @apply outline-none ring-2 ring-primary-500/60 ring-offset-2 ring-offset-canvas;
   }
 }
 
 @layer components {
-  .glass {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-glass;
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-primary-600 px-6 py-3 text-sm font-semibold text-white shadow-button transition-all duration-200 hover:bg-primary-700 active:scale-[0.97] disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  .glass-dark {
-    @apply bg-slate-900/80 backdrop-blur-md border border-slate-700/30 shadow-glass;
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-surface text-ink border border-slate-200 px-6 py-3 text-sm font-semibold shadow-soft transition-all duration-200 hover:bg-slate-50 dark:bg-dark-surface dark:border-dark-border dark:hover:bg-dark-raised active:scale-[0.97];
   }
 
-  .text-gradient {
-    @apply bg-clip-text text-transparent bg-gradient-to-r from-primary-600 to-indigo-600;
+  .input-base {
+    @apply w-full bg-surface text-ink placeholder:text-muted dark:bg-dark-surface dark:text-white rounded-full border border-slate-200 dark:border-dark-border outline-none transition-all focus:border-primary-500 focus:ring-4 focus:ring-primary-500/10;
   }
 
-  .skeleton-shimmer {
-    @apply relative overflow-hidden bg-slate-200;
+  .chip {
+    @apply inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-semibold;
   }
 
-  .skeleton-shimmer::after {
+  .glass-nav {
+    @apply bg-white/70 dark:bg-black/60 backdrop-blur-2xl border-b border-slate-200/60 dark:border-dark-border/60;
+  }
+
+  .skeleton {
+    @apply relative overflow-hidden bg-slate-200 dark:bg-dark-raised;
+  }
+
+  .skeleton::after {
     content: "";
     @apply absolute inset-0 -translate-x-full;
-    background: linear-gradient(
-      90deg,
-      transparent,
-      rgba(255, 255, 255, 0.4),
-      transparent
-    );
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
     animation: shimmer 1.5s infinite;
   }
 }
@@ -48,12 +64,9 @@
   }
 }
 
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
   }
-}
-
-html {
-  scroll-behavior: smooth;
 }

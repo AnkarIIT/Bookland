@@ -1,10 +1,12 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
+const gutenberg = require('../lib/gutenberg');
+const { parseSlug, rowToBook, upsertGutenbergBooks } = require('../lib/books');
 
 const OL_BOOKS_URL = 'https://openlibrary.org/api/books';
 
-async function fetchFromOpenLibrary(isbn) {
+async function fetchOpenLibraryDetail(isbn) {
   const url = `${OL_BOOKS_URL}?bibkeys=ISBN:${isbn}&format=json&jscmd=data`;
   const response = await fetch(url, { signal: AbortSignal.timeout(10000) });
   if (!response.ok) {
@@ -16,7 +18,9 @@ async function fetchFromOpenLibrary(isbn) {
 
   const cover = record.cover || {};
   return {
+    id: `isbn-${isbn}`,
     isbn_13: isbn,
+    gutenberg_id: null,
     title: record.title || 'Unknown Title',
     subtitle: record.subtitle || null,
     authors: (record.authors || []).map((a) => a.name).filter(Boolean),
@@ -30,7 +34,12 @@ async function fetchFromOpenLibrary(isbn) {
   };
 }
 
-async function upsertDetail(book) {
+const DETAIL_FIELDS = `
+  isbn_13, gutenberg_id, archive_id, title, subtitle, authors, publisher, published_year,
+  language, subjects, description, page_count, cover_url, is_free, read_url, source
+`;
+
+async function upsertOpenLibraryDetail(book) {
   await db.query(
     `INSERT INTO books (isbn_13, title, subtitle, authors, publisher, published_year, language, subjects, description, page_count, cover_url, source)
      VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'openlibrary')
@@ -62,50 +71,87 @@ async function upsertDetail(book) {
   );
 }
 
-const DETAIL_FIELDS = `
-  isbn_13, title, subtitle, authors, publisher, published_year,
-  language, subjects, description, page_count, cover_url, is_free, read_url
-`;
+const getLocalBook = async (whereClause, params) => {
+  const { rows } = await db.query(`SELECT ${DETAIL_FIELDS} FROM books ${whereClause} LIMIT 1`, params);
+  if (rows.length === 0) return null;
+  return { ...rowToBook(rows[0]), ...rows[0] };
+};
 
-router.get('/:isbn', async (req, res, next) => {
+router.get('/:key', async (req, res, next) => {
   try {
-    const isbn = (req.params.isbn || '').replace(/\D/g, '').slice(0, 13);
+    const parsed = parseSlug(req.params.key);
 
-    if (!isbn) {
-      return res.status(400).json({ error: 'A valid ISBN is required' });
+    if (!parsed) {
+      return res.status(400).json({ error: 'A valid book identifier is required' });
     }
 
     // 1. Try local persistence first (a DB outage must not block upstream fallback)
     let localBook = null;
     try {
-      const { rows } = await db.query(
-        `SELECT ${DETAIL_FIELDS} FROM books WHERE isbn_13 = $1`,
-        [isbn]
-      );
-      localBook = rows[0] || null;
+      localBook =
+        parsed.kind === 'isbn'
+          ? await getLocalBook('WHERE isbn_13 = $1', [parsed.id])
+          : await getLocalBook('WHERE gutenberg_id = $1', [parsed.id]);
     } catch (dbErr) {
-      console.error('Local book lookup failed, falling back to Open Library:', dbErr.message);
+      console.error('Local book lookup failed, falling back upstream:', dbErr.message);
     }
 
     if (localBook) {
       return res.json(localBook);
     }
 
-    // 2. Fetch from Open Library, then persist for future reads
+    // 2. Fetch from the appropriate source, then persist for future reads
     let book = null;
-    try {
-      book = await fetchFromOpenLibrary(isbn);
-      if (book) {
-        upsertDetail(book).catch((err) =>
-          console.error(`Failed to upsert detail for ISBN ${isbn}:`, err.message)
+
+    if (parsed.kind === 'gutenberg') {
+      try {
+        const doc = await gutenberg.getById(parsed.id);
+        book = {
+          id: `gutenberg-${doc.id}`,
+          gutenberg_id: doc.id,
+          isbn_13: null,
+          title: doc.title || 'Unknown Title',
+          subtitle: null,
+          authors: (doc.authors || []).map((a) => a.name).filter(Boolean),
+          publisher: null,
+          published_year: doc.authors && doc.authors.length > 0 ? doc.authors[0].birth_year || null : null,
+          language: (doc.languages || []).join(', ') || null,
+          subjects: (doc.subjects || []).slice(0, 20),
+          description: (doc.summaries || []).join(' ') || null,
+          page_count: null,
+          cover_url: gutenberg.getCoverUrl(doc),
+          source: 'gutenberg',
+          readable: true,
+          read_kind: 'gutenberg',
+          read_id: String(doc.id),
+        };
+        const mapped = {
+          gutenberg_id: doc.id,
+          title: book.title,
+          authors: book.authors,
+          published_year: book.published_year,
+        };
+        upsertGutenbergBooks([mapped]).catch((err) =>
+          console.error(`Failed to upsert gutenberg ${doc.id}:`, err.message)
         );
+      } catch (err) {
+        console.error(`Gutenberg detail fetch failed for ${parsed.id}:`, err.message);
       }
-    } catch (err) {
-      console.error(`Open Library detail fetch failed for ${isbn}:`, err.message);
+    } else {
+      try {
+        book = await fetchOpenLibraryDetail(parsed.id);
+        if (book) {
+          upsertOpenLibraryDetail(book).catch((err) =>
+            console.error(`Failed to upsert detail for ISBN ${parsed.id}:`, err.message)
+          );
+        }
+      } catch (err) {
+        console.error(`Open Library detail fetch failed for ${parsed.id}:`, err.message);
+      }
     }
 
     if (!book) {
-      return res.status(404).json({ error: 'No book found for this ISBN' });
+      return res.status(404).json({ error: 'No book found for this identifier' });
     }
 
     res.json(book);
