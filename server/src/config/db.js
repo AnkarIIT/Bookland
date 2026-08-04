@@ -8,12 +8,16 @@ const pool = new Pool({
   database: process.env.DB_NAME || 'bookland',
 });
 
-pool.on('error', (err, client) => {
-  console.error('Unexpected error on idle pg client', err);
-  process.exit(-1);
+pool.on('error', (err) => {
+  console.error('Unexpected error on idle pg client', err.message);
 });
 
+const query = (text, params) => pool.query(text, params);
+
+const closePool = () => pool.end();
+
 module.exports = {
-  query: (text, params) => pool.query(text, params),
+  query,
   pool,
+  closePool,
 };

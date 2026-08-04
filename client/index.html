@@ -5,8 +5,20 @@
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bookland - Infrastructure for Knowledge</title>
+    <script>
+      (function () {
+        try {
+          var raw = localStorage.getItem('bookland-theme');
+          var theme = raw ? (JSON.parse(raw).state || {}).theme : 'system';
+          if (theme === 'system') {
+            theme = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+          }
+          document.documentElement.classList.add(theme);
+        } catch (e) {}
+      })();
+    </script>
   </head>
-  <body class="bg-parchment text-ink font-sans antialiased min-h-screen">
+  <body class="bg-slate-50 dark:bg-slate-950 text-ink font-sans antialiased min-h-screen">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>

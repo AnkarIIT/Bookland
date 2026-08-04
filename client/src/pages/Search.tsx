@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useSearchStore } from '../store/useSearchStore';
 import BookCard from '../components/BookCard';
-import { SearchIcon } from 'lucide-react';
+import { SearchIcon, Info, Library } from 'lucide-react';
 
 const Search = () => {
   const { searchQuery, results, isLoading, error, performSearch, setSearchQuery } = useSearchStore();
@@ -23,74 +23,98 @@ const Search = () => {
   };
 
   return (
-    <div className="w-full">
-      <div className="mb-8 max-w-3xl">
-        <form onSubmit={handleSearch} className="relative flex shadow-sm rounded-lg overflow-hidden border border-gray-300 focus-within:border-accent focus-within:ring-1 focus-within:ring-accent transition-all bg-white">
-          <input
-            type="text"
-            className="w-full p-4 pl-5 outline-none text-lg font-medium"
-            placeholder="Search books by title, author, or ISBN..."
-            value={localQuery}
-            onChange={(e) => setLocalQuery(e.target.value)}
-          />
-          <button type="submit" className="bg-accent text-white px-8 hover:bg-blue-700 transition-colors flex items-center justify-center">
-            <SearchIcon size={24} />
-          </button>
+    <div className="w-full max-w-7xl mx-auto">
+      <div className="mb-12">
+        <form onSubmit={handleSearch} className="relative group max-w-4xl">
+          <div className="absolute -inset-1 bg-gradient-to-r from-primary-500 to-indigo-500 rounded-2xl blur opacity-10 group-focus-within:opacity-25 transition-opacity duration-500"></div>
+          <div className="relative flex shadow-premium rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 focus-within:border-primary-500/50 transition-all bg-white dark:bg-slate-900">
+            <input
+              type="text"
+              className="w-full p-5 pl-7 outline-none text-lg font-medium text-slate-900 dark:text-white placeholder:text-slate-400 bg-transparent"
+              placeholder="Search books by title, author, or ISBN..."
+              value={localQuery}
+              onChange={(e) => setLocalQuery(e.target.value)}
+            />
+            <button type="submit" className="bg-primary-600 text-white px-10 hover:bg-primary-700 transition-all flex items-center justify-center active:scale-95">
+              <SearchIcon size={24} strokeWidth={2.5} />
+            </button>
+          </div>
         </form>
       </div>
 
-      <div className="mb-6 flex flex-col md:flex-row md:justify-between md:items-end gap-2 border-b border-gray-200 pb-4">
-        <h2 className="text-2xl font-bold text-ink">
-          {searchQuery ? `Results for "${searchQuery}"` : 'Recent Books'}
-        </h2>
+      <div className="mb-10 flex flex-col md:flex-row md:justify-between md:items-center gap-4 border-b border-slate-200 pb-6">
+        <div>
+          <h2 className="text-3xl font-display font-extrabold text-slate-900 tracking-tight">
+            {searchQuery ? `Results for "${searchQuery}"` : 'Global Catalog'}
+          </h2>
+          <p className="text-slate-500 font-medium mt-1">
+            Accessing decentralized book data via Open Library API
+          </p>
+        </div>
         {!isLoading && results.length > 0 && searchQuery && (
-          <span className="text-sm font-medium text-gray-500 bg-gray-100 px-3 py-1 rounded-full">{results.length} found</span>
+          <div className="flex items-center gap-2 px-4 py-2 bg-primary-50 text-primary-700 rounded-full border border-primary-100 text-sm font-bold shadow-sm">
+            <span className="w-2 h-2 rounded-full bg-primary-500 animate-pulse"></span>
+            {results.length} volumes identified
+          </div>
         )}
       </div>
 
       {error ? (
-        <div className="bg-red-50 text-red-700 p-6 rounded-lg border border-red-200 flex flex-col items-center justify-center min-h-[40vh] text-center">
-          <span className="text-4xl mb-4">⚠️</span>
-          <h3 className="text-lg font-bold mb-2">Search Failed</h3>
-          <p>{error}</p>
+        <div className="bg-white p-12 rounded-3xl border border-slate-200 shadow-premium flex flex-col items-center justify-center min-h-[40vh] text-center max-w-2xl mx-auto">
+          <div className="w-20 h-20 bg-red-50 text-red-500 rounded-2xl flex items-center justify-center mb-6 border border-red-100">
+            <Info size={40} />
+          </div>
+          <h3 className="text-2xl font-display font-extrabold text-slate-900 mb-3">Transmission Failed</h3>
+          <p className="text-slate-500 font-medium text-lg leading-relaxed">{error}</p>
+          <button 
+            onClick={() => performSearch(searchQuery)}
+            className="mt-8 bg-slate-900 text-white px-8 py-3 rounded-full font-bold hover:bg-slate-800 transition-all active:scale-95"
+          >
+            Retry Connection
+          </button>
         </div>
       ) : isLoading ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-8">
-          {[...Array(12)].map((_, i) => (
-            <div key={i} className="animate-pulse flex flex-col bg-white border border-gray-100 rounded-xl shadow-sm overflow-hidden h-[360px]">
-              <div className="h-64 bg-gray-200 w-full"></div>
-              <div className="flex-1 p-5 flex flex-col gap-3">
-                <div className="h-4 bg-gray-300 rounded-full w-full"></div>
-                <div className="h-3 bg-gray-200 rounded-full w-2/3 mb-auto"></div>
-                <div className="flex justify-between items-center pt-3 border-t border-gray-100">
-                  <div className="h-4 bg-gray-200 rounded w-12"></div>
-                  <div className="h-4 bg-gray-200 rounded w-24"></div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-8">
+          {[...Array(10)].map((_, i) => (
+            <div key={i} className="flex flex-col bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden h-[420px]">
+              <div className="h-2/3 skeleton-shimmer w-full"></div>
+              <div className="flex-1 p-6 flex flex-col gap-4">
+                <div className="h-5 skeleton-shimmer rounded-full w-full"></div>
+                <div className="h-4 skeleton-shimmer rounded-full w-2/3 mb-auto opacity-60"></div>
+                <div className="flex justify-between items-center pt-4 border-t border-slate-100">
+                  <div className="h-5 skeleton-shimmer rounded w-12 opacity-40"></div>
+                  <div className="h-5 skeleton-shimmer rounded w-24 opacity-40"></div>
                 </div>
               </div>
             </div>
           ))}
         </div>
       ) : results.length > 0 ? (
-        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-6 gap-x-6 gap-y-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 2xl:grid-cols-5 gap-8 animate-fade-in">
           {results.map((book) => (
-            <BookCard key={book.id || book.isbn_13} book={book} />
+            <BookCard key={book.isbn_13} book={book} />
           ))}
         </div>
       ) : searchQuery ? (
-        <div className="text-center py-24 bg-gray-50 rounded-2xl border border-dashed border-gray-300 shadow-sm">
-          <span className="text-6xl mb-4 block drop-shadow-sm">👻</span>
-          <h3 className="text-2xl font-extrabold text-ink mb-2">No books found</h3>
-          <p className="text-lg text-gray-500 max-w-lg mx-auto text-balance">
-            We couldn't find any exact matches for <strong className="font-semibold text-gray-700">"{searchQuery}"</strong>. Try checking for typos or searching by a different author.
+        <div className="text-center py-32 bg-slate-50 rounded-[3rem] border border-dashed border-slate-300 shadow-inner max-w-3xl mx-auto px-8">
+          <div className="text-7xl mb-8 block drop-shadow-sm opacity-50 grayscale">🔍</div>
+          <h3 className="text-3xl font-display font-extrabold text-slate-900 mb-4">No results in archive</h3>
+          <p className="text-xl text-slate-500 max-w-lg mx-auto text-balance leading-relaxed">
+            We couldn't find any direct matches for <strong className="font-bold text-slate-900">"{searchQuery}"</strong>. Try broadening your keywords or checking for ISBN typos.
           </p>
         </div>
       ) : (
-        <div className="text-center py-24 bg-gradient-to-b from-gray-50 to-white rounded-2xl border border-gray-200 shadow-sm">
-          <span className="text-6xl mb-4 block drop-shadow-sm">📚</span>
-          <h3 className="text-2xl font-extrabold text-ink mb-2">Explore the digital library</h3>
-          <p className="text-lg text-gray-500">
-            Search by title, author, or ISBN to browse real-world data populated directly from the Open Library.
-          </p>
+        <div className="text-center py-32 bg-gradient-to-br from-slate-900 to-slate-800 rounded-[3rem] border border-slate-700 shadow-2xl relative overflow-hidden group">
+          <div className="absolute inset-0 bg-[url('https://www.transparenttextures.com/patterns/carbon-fibre.png')] opacity-10"></div>
+          <div className="relative z-10 px-8">
+            <div className="w-24 h-24 bg-primary-500/20 text-primary-400 rounded-[2rem] flex items-center justify-center mx-auto mb-10 border border-primary-500/30 group-hover:scale-110 transition-transform duration-500">
+              <Library size={48} strokeWidth={1.5} />
+            </div>
+            <h3 className="text-4xl font-display font-extrabold text-white mb-6 tracking-tight">Access the Global Archive</h3>
+            <p className="text-xl text-slate-400 max-w-2xl mx-auto leading-relaxed font-medium">
+              Bookland connects directly to the Open Library via secure API bridge. Use the search above to explore millions of human-indexed records.
+            </p>
+          </div>
         </div>
       )}
     </div>

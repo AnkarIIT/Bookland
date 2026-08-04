@@ -61,6 +61,8 @@ Bookland bridges the gap between massive book databases and a seamless user expe
    cp .env.example .env  # Update with your local DB/Redis credentials
    ```
 
+   > **Note:** When running the backend locally (outside Docker), make sure `REDIS_URL` points to `redis://localhost:6379` and `DB_HOST` to `localhost`. The `redis://redis:6379` / `postgres` hostnames in `infra/.env.example` only resolve inside the Docker network.
+
 3. **Frontend Setup**:
    ```bash
    cd ../client
@@ -98,7 +100,7 @@ Bookland bridges the gap between massive book databases and a seamless user expe
 ## 🗺️ Roadmap
 
 - [x] Week 1: Core Search & Infrastructure MVP.
-- [ ] Week 2: User Accounts & Personal Collections.
+- [x] Week 2: User Accounts & Personal Collections (accounts/auth shipped; collections pending).
 - [ ] Week 3: AI-Powered "What-If" Engine for book analysis.
 - [ ] Week 4: Google Drive Integration for personal ebook storage.
 
