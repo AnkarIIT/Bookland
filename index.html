@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Bookland • Your Digital Library</title>
+  <meta name="description" content="Search millions of books from Open Library and Project Gutenberg. Free ebooks, research papers, and articles in one place.">
+  
+  <script>
+    // Theme management
+    (function() {
+      const saved = localStorage.getItem('bookland-theme');
+      const defaultTheme = 'system';
+      const theme = saved ? JSON.parse(saved).state?.theme : defaultTheme;
+      
+      const root = document.documentElement;
+      root.classList.remove('light', 'dark');
+      
+      if (theme === 'system') {
+        const system = window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+        root.classList.add(system);
+      } else {
+        root.classList.add(theme);
+      }
+    })();
+  </script>
+  
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/favicon.svg">
+  <meta name="theme-color" content="#f5f5f7">
+  
+  <script type="module">
+    // Client-side navigation for SPA-like experience
+    document.addEventListener('DOMContentLoaded', () => {
+      const links = document.querySelectorAll('a[href^="/"]');
+      links.forEach(link => {
+        if (!link.getAttribute('target') && !link.getAttribute('download')) {
+          link.addEventListener('click', e => {
+            e.preventDefault();
+            const url = new URL(link.href);
+            window.history.pushState({}, '', url.pathname);
+            // Would fetch and render content here in full SPA
+          });
+        }
+      });
+    });
+  </script>
+</head>
+
+<body class="bg-canvas text-ink font-sans antialiased min-h-screen">
+  <!-- Skip to content -->
+  <a href="#main" class="sr-only focus:not-sr-only p-4 bg-primary-600 text-white">Skip to content</a>
+  
+  <!-- Header -->
+  <header class="sticky top-0 z-40 bg-white/80 dark:bg-black/80 backdrop-blur-xl border-b border-slate-200/60 dark:border-dark-border/60">
+    <div class="max-w-6xl mx-auto px-5 sm:px-8">
+      <div class="flex items-center justify-between h-16">
+        <a href="/" class="flex items-center gap-3 font-display font-bold text-[17px] tracking-tight">
+          <span class="w-8 h-8 rounded-xl bg-gradient-to-br from-primary-500 to-purple-600 flex items-center justify-center shadow-md">
+            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="white" class="w-5 h-5"><path d="M4 4.5C4 3.12 5.12 2 6.5 2h11C17.88 2 19 3.12 19 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-11C5.12 22 4 20.88 4 19.5V4.5zm2.5 0v15h11V4.5h-11zM7 7v1.5h10V7H7zm0 3v1.5h10V10H7zm0 3v1.5h5.5V13H7z"/></svg>
+          </span>
+          Bookland
+        </a>
+
+        <nav class="flex items-center gap-6">
+          <a href="/search" class="text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">Explore</a>
+          <a href="#features" class="hidden sm:block text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">Features</a>
+          <a href="#books" class="hidden sm:block text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">Books</a>
+          <a href="#pricing" class="hidden sm:block text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">Pricing</a>
+        </nav>
+
+        <div class="flex items-center gap-3">
+          <button id="theme-toggle" class="p-2 rounded-full text-muted hover:text-ink dark:hover:text-white hover:bg-slate-200/50 dark:hover:bg-dark-raised transition-all" aria-label="Toggle theme">
+            <svg id="theme-icon" class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M12 2a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1z"/>
+              <path d="M21 12a1 1 0 0 1-1 1h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1z"/>
+              <path d="M12 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1z"/>
+              <path d="4.93 4.93a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 0 1-1.41-1.41l1.41-1.41a1 1 0 0 1 1.41 0z"/>
+              <path d="M19.07 19.07a1 1 0 0 1 0 1.41l-1.41 1.41a1 1 0 0 1-1.41-1.41l1.41-1.41a1 1 0 0 1 1.41 0z"/>
+              <path d="M6.34 12.93a1 1 0 0 1-1.41 0l-1.41-1.41a1 1 0 0 1 1.41-1.41l1.41 1.41a1 1 0 0 1 0 1.41z"/>
+              <path d="M17.66 12.93a1 1 0 0 1-1.41 0l-1.41-1.41a1 1 0 0 1 1.41-1.41l1.41 1.41a1 1 0 0 1 0 1.41z"/>
+            </svg>
+          </button>
+          <a href="/login" class="hidden sm:block btn-primary !px-5 !py-2 !text-sm !font-semibold">Sign In</a>
+          <a href="/register" class="hidden sm:block btn-secondary !px-5 !py-2 !text-sm !font-semibold">Get Started</a>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main id="main">
+    <!-- Hero Section -->
+    <section class="relative pt-24 pb-32 px-5 sm:px-8">
+      <div class="max-w-4xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-primary-50 text-primary-600 dark:bg-primary-500/15 dark:text-primary-400 text-xs font-semibold mb-8">
+          <span class="w-2 h-2 rounded-full bg-primary-600"></span>
+          Now reading millions of books free
+        </div>
+
+        <h1 class="font-display font-extrabold tracking-tight text-6xl sm:text-7xl lg:text-8xl text-ink dark:text-white mb-8 leading-[1.05] leading-tight">
+          Every book.
+          <br>
+          <span class="text-gradient">Every idea.</span>
+          <br>
+          Found.
+        </h1>
+
+        <p class="text-xl font-medium text-muted dark:text-dark-muted mb-10 max-w-2xl mx-auto leading-relaxed">
+          Search millions of books, research papers, and articles from the world's open libraries — and read them right here.
+        </p>
+
+        <div class="max-w-2xl mx-auto mb-12">
+          <div class="relative">
+            <input type="text" placeholder="Search the world's knowledge..." class="w-full py-4 pl-6 pr-32 text-lg bg-surface dark:bg-dark-surface rounded-2xl border border-slate-200 dark:border-dark-border outline-none focus:ring-2 ring-primary-500/20">
+            <button class="absolute right-2 top-1/2 -translate-y-1/2 bg-primary-600 text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-primary-700 transition-all">
+              Search
+            </button>
+          </div>
+        </div>
+
+        <div class="flex gap-4 justify-center">
+          <button class="btn-primary">Start Exploring</button>
+          <button class="btn-secondary">Watch Demo</button>
+        </div>
+      </div>
+
+      <!-- Floating book covers -->
+      <div class="absolute -top-12 -left-12 w-48 h-64 rounded-2xl overflow-hidden shadow-2xl bg-slate-200"></div>
+      <div class="absolute -bottom-12 -right-12 w-40 h-56 rounded-2xl overflow-hidden shadow-2xl bg-slate-200"></div>
+    </section>
+
+    <!-- Stats Section -->
+    <section class="py-20 bg-canvas dark:bg-dark-canvas">
+      <div class="max-w-5xl mx-auto px-5 sm:px-8">
+        <div class="grid grid-cols-2 md:grid-cols-4 gap-8">
+          <div class="text-center">
+            <div class="text-3xl font-display font-bold text-ink dark:text-white">50M+</div>
+            <p class="text-sm font-medium text-muted dark:text-dark-muted mt-1">Books indexed</p>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-display font-bold text-ink dark:text-white">100K+</div>
+            <p class="text-sm font-medium text-muted dark:text-dark-muted mt-1">Free classics</p>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-display font-bold text-ink dark:text-white">&lt;50ms</div>
+            <p class="text-sm font-medium text-muted dark:text-dark-muted mt-1">Search speed</p>
+          </div>
+          <div class="text-center">
+            <div class="text-3xl font-display font-bold text-ink dark:text-white">0</div>
+            <p class="text-sm font-medium text-muted dark:text-dark-muted mt-1">Ads ever</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features Section -->
+    <section id="features" class="py-32 px-5 sm:px-8">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-20">
+          <h2 class="font-display font-extrabold tracking-tightest text-5xl text-ink dark:text-white mb-6">
+            Designed for readers
+          </h2>
+          <p class="text-lg font-medium text-muted dark:text-dark-muted max-w-xl mx-auto">
+            A distraction-free reading experience with beautiful typography and customizable themes.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-12">
+          <div class="group">
+            <div class="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="currentColor"><path d="M3 4a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v16a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4z"/><path d="M3 8h18v12H3V8z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-ink dark:text-white mb-3">Unlimited Library</h3>
+            <p class="text-muted dark:text-dark-muted">Access over 100,000 free ebooks from Project Gutenberg and Open Library.</p>
+          </div>
+
+          <div class="group">
+            <div class="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="currentColor"><path d="M4 4.5C4 3.12 5.12 2 6.5 2h11C17.88 2 19 3.12 19 4.5v15c0 1.38-1.12 2.5-2.5 2.5h-11C5.12 22 4 20.88 4 19.5V4.5zm2.5 0v15h11V4.5h-11zM7 7v1.5h10V7H7zm0 3v1.5h10V10H7zm0 3v1.5h5.5V13H7z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-ink dark:text-white mb-3">Beautiful Reader</h3>
+            <p class="text-muted dark:text-dark-muted">Distraction-free reading with adjustable fonts, themes, and night mode.</p>
+          </div>
+
+          <div class="group">
+            <div class="w-14 h-14 rounded-2xl bg-primary-50 dark:bg-primary-500/10 flex items-center justify-center mb-6">
+              <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 text-primary-600 dark:text-primary-400" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a1 1 0 0 1 1 1v2a1 1 0 0 1-2 0V3a1 1 0 0 1 1-1z"/><path d="M21 12a1 1 0 0 1-1 1h-2a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1z"/><path d="M12 20a1 1 0 0 1-1-1v-2a1 1 0 0 1 2 0v2a1 1 0 0 1-1 1z"/></svg>
+            </div>
+            <h3 class="font-display font-bold text-2xl text-ink dark:text-white mb-3">Sync Everywhere</h3>
+            <p class="text-muted dark:text-dark-muted">Continue reading where you left off on any device.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Book Showcase -->
+    <section id="books" class="py-32 px-5 sm:px-8 bg-canvas dark:bg-dark-canvas">
+      <div class="max-w-6xl mx-auto">
+        <div class="text-center mb-16">
+          <h2 class="font-display font-extrabold tracking-tightest text-5xl text-ink dark:text-white mb-6">
+            Timeless classics
+          </h2>
+          <p class="text-lg font-medium text-muted dark:text-dark-muted">
+            Explore hand-picked favorites from literature's greatest works.
+          </p>
+        </div>
+
+        <div class="grid md:grid-cols-3 gap-8">
+          <div class="group">
+            <div class="aspect-[2/3] rounded-2xl overflow-hidden bg-slate-200 dark:bg-dark-raised shadow-lg"></div>
+          </div>
+          <div class="group">
+            <div class="aspect-[2/3] rounded-2xl overflow-hidden bg-slate-200 dark:bg-dark-raised shadow-lg"></div>
+          </div>
+          <div class="group">
+            <div class="aspect-[2/3] rounded-2xl overflow-hidden bg-slate-200 dark:bg-dark-raised shadow-lg"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-32 px-5 sm:px-8">
+      <div class="max-w-3xl mx-auto text-center">
+        <div class="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary-50 text-primary-600 dark:bg-primary-500/15 dark:text-primary-400 text-sm font-semibold mb-8">
+          <span>New?</span>
+        </div>
+        
+        <h2 class="font-display font-extrabold tracking-tightest text-5xl text-ink dark:text-white mb-8">
+          Join the library
+        </h2>
+        
+        <p class="text-lg font-medium text-muted dark:text-dark-muted mb-12 max-w-2xl mx-auto">
+          Create a free account to save your progress, build collections, and access all features.
+        </p>
+        
+        <div class="flex gap-4 justify-center">
+          <button class="btn-primary">Create Free Account</button>
+          <button class="btn-secondary">Learn More</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Footer -->
+  <footer class="border-t border-slate-200/70 dark:border-dark-border/70 py-12 px-5 sm:px-8">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex flex-col md:flex-row items-center justify-between gap-6 mb-8">
+        <p class="text-sm font-medium text-muted dark:text-dark-muted">
+          &copy; 2024 Bookland. Free the mind.
+        </p>
+        <div class="flex gap-8">
+          <a href="#" class="text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">About</a>
+          <a href="#" class="text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">Privacy</a>
+          <a href="#" class="text-sm font-medium text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors">Terms</a>
+        </div>
+      </div>
+      
+      <div class="border-t border-slate-200/70 dark:border-dark-border/70 pt-8 text-xs text-muted dark:text-dark-muted">
+        <p>Powered by Open Library & Project Gutenberg • Built with ❤️ on the open web</p>
+      </div>
+    </div>
+  </footer>
+
+  <style>
+    :root {
+      --color-canvas: #f5f5f7;
+      --color-surface: #ffffff;
+      --color-ink: #1d1d1f;
+      --color-muted: #6e6e73;
+    }
+
+    .dark {
+      --color-canvas: #000000;
+      --color-surface: #1d1d1f;
+      --color-ink: #f5f5f7;
+      --color-muted: #86868b;
+    }
+
+    .bg-canvas { background-color: var(--color-canvas); }
+    .bg-surface { background-color: var(--color-surface); }
+    .text-ink { color: var(--color-ink); }
+    .text-muted { color: var(--color-muted); }
+    .btn-primary {
+      @apply inline-flex items-center gap-2 rounded-full bg-primary-600 text-white text-sm font-semibold px-6 py-3 transition-all duration-200 hover:bg-primary-700;
+    }
+    .btn-secondary {
+      @apply inline-flex items-center gap-2 rounded-full bg-surface text-ink border border-slate-200 dark:border-dark-border text-sm font-semibold px-6 py-3 transition-all duration-200 hover:bg-slate-50 dark:hover:bg-dark-raised;
+    }
+    .text-gradient { 
+      background: linear-gradient(90deg, #0a84ff 0%, #a855f7 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
+    }
+    .shadow-lg { box-shadow: 0 10px 40px -5px rgba(0, 0, 0, 0.15); }
+    .shadow-2xl { box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+  </style>
+</body>
+</html>
