@@ -46,6 +46,10 @@ export default {
         lift: '0 24px 60px -15px rgba(0, 0, 0, 0.18)',
         glass: '0 8px 32px 0 rgba(31, 38, 135, 0.07)',
         button: '0 2px 8px rgba(0, 113, 227, 0.35)',
+        glow: '0 0 80px -20px rgba(10, 132, 255, 0.45)',
+        'glow-purple': '0 0 80px -20px rgba(124, 58, 237, 0.45)',
+        card: '0 4px 20px rgba(0, 0, 0, 0.06), 0 40px 80px -40px rgba(0, 0, 0, 0.18)',
+        'card-dark': '0 4px 20px rgba(0, 0, 0, 0.5), 0 40px 80px -40px rgba(0, 0, 0, 0.6)',
       },
       keyframes: {
         'fade-up': {
@@ -56,10 +60,20 @@ export default {
           '0%': { opacity: '0' },
           '100%': { opacity: '1' },
         },
+        float: {
+          '0%, 100%': { transform: 'translateY(0px)' },
+          '50%': { transform: 'translateY(-10px)' },
+        },
+        'float-tilt': {
+          '0%, 100%': { transform: 'translateY(0px) rotate(var(--tilt, 0deg))' },
+          '50%': { transform: 'translateY(-12px) rotate(var(--tilt, 0deg))' },
+        },
       },
       animation: {
         'fade-up': 'fade-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both',
         'fade-in': 'fade-in 0.4s ease-out both',
+        float: 'float 6s ease-in-out infinite',
+        'float-tilt': 'float-tilt 6s ease-in-out infinite',
       },
     },
   },

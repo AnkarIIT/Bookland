@@ -7,7 +7,7 @@ import BookDetailPage from './pages/BookDetail';
 import ReaderPage from './pages/Reader';
 import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
-import { Moon, Sun, Settings2, LogOut, User as UserIcon } from 'lucide-react';
+import { Moon, Sun, Settings2, LogOut, User as UserIcon, BookOpen } from 'lucide-react';
 import { useThemeStore } from './store/useThemeStore';
 import { useAuthStore } from './store/useAuthStore';
 import { useSearchStore, type ContentType } from './store/useSearchStore';
@@ -41,8 +41,11 @@ function App() {
           <div className="flex items-center justify-between h-14">
             <Link
               to="/"
-              className="font-display font-bold text-[17px] tracking-tighter text-ink dark:text-white"
+              className="flex items-center gap-2 font-display font-bold text-[17px] tracking-tighter text-ink dark:text-white"
             >
+              <span className="inline-flex items-center justify-center w-7 h-7 rounded-lg bg-gradient-to-br from-primary-500 to-purple-600 text-white shadow-button">
+                <BookOpen size={15} strokeWidth={2.5} />
+              </span>
               Bookland
             </Link>
 
@@ -104,7 +107,13 @@ function App() {
         </div>
       </header>
 
-      <main className="flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 py-12 md:py-16">
+      <main
+        className={
+          location.pathname === '/'
+            ? 'flex-1 w-full'
+            : 'flex-1 w-full max-w-5xl mx-auto px-5 sm:px-8 py-12 md:py-16'
+        }
+      >
         <ErrorBoundary>
           <Routes>
             <Route path="/" element={<Home />} />
