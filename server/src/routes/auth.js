@@ -1,11 +1,35 @@
 const express = require('express');
 const bcrypt = require('bcryptjs');
+const cookieParser = require('cookie-parser');
 const db = require('../config/db');
-const { signToken, requireAuth } = require('../middleware/auth');
+const {
+  signAccessToken,
+  setAuthCookies,
+  clearAuthCookies,
+  requireAuth,
+  refreshAccessToken,
+} = require('../middleware/auth');
 
 const router = express.Router();
+router.use(cookieParser());
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+
+const validatePassword = (password) => {
+  if (String(password).length < 8) {
+    return 'Password must be at least 8 characters';
+  }
+  if (!/[A-Z]/.test(password)) {
+    return 'Password must contain at least one uppercase letter';
+  }
+  if (!/[a-z]/.test(password)) {
+    return 'Password must contain at least one lowercase letter';
+  }
+  if (!/[0-9]/.test(password)) {
+    return 'Password must contain at least one number';
+  }
+  return null;
+};
 
 router.post('/register', async (req, res, next) => {
   try {
@@ -14,8 +38,10 @@ router.post('/register', async (req, res, next) => {
     if (!email || !name || !password) {
       return res.status(400).json({ error: 'email, name and password are required' });
     }
-    if (String(password).length < 8) {
-      return res.status(400).json({ error: 'Password must be at least 8 characters' });
+
+    const passwordError = validatePassword(password);
+    if (passwordError) {
+      return res.status(400).json({ error: passwordError });
     }
 
     const normalizedEmail = String(email).trim().toLowerCase();
@@ -28,7 +54,7 @@ router.post('/register', async (req, res, next) => {
       return res.status(409).json({ error: 'An account with this email already exists' });
     }
 
-    const passwordHash = await bcrypt.hash(String(password), 10);
+    const passwordHash = await bcrypt.hash(String(password), 12);
     const { rows } = await db.query(
       `INSERT INTO users (email, name, password_hash)
        VALUES ($1, $2, $3)
@@ -37,7 +63,8 @@ router.post('/register', async (req, res, next) => {
     );
 
     const user = rows[0];
-    return res.status(201).json({ token: signToken(user), user });
+    setAuthCookies(res, user);
+    return res.status(201).json({ user });
   } catch (error) {
     console.error('Register error:', error.message);
     return next(error);
@@ -68,11 +95,19 @@ router.post('/login', async (req, res, next) => {
     }
 
     const { password_hash, ...user } = rows[0];
-    return res.json({ token: signToken(user), user });
+    setAuthCookies(res, user);
+    return res.json({ user });
   } catch (error) {
     console.error('Login error:', error.message);
     return next(error);
   }
+});
+
+router.post('/refresh', refreshAccessToken);
+
+router.post('/logout', (req, res) => {
+  clearAuthCookies(res);
+  return res.json({ message: 'Logged out successfully' });
 });
 
 router.get('/me', requireAuth, async (req, res, next) => {
