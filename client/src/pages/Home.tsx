@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { lazy, Suspense, useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import {
   Search as SearchIcon,
@@ -22,6 +22,10 @@ import SegmentedControl from '../components/SegmentedControl';
 import Reveal from '../components/Reveal';
 import { SEO, getWebSiteSchema } from '../components/SEO';
 
+const Hero3D = lazy(() =>
+  import('../components/three/Hero3D').then((m) => ({ default: m.Hero3D }))
+);
+
 const TYPE_OPTIONS: { value: ContentType; label: string }[] = [
   { value: 'all', label: 'Everything' },
   { value: 'book', label: 'Books' },
@@ -36,14 +40,6 @@ const FEATURED = [
   { gutenbergId: 84, title: 'Frankenstein', author: 'Mary Shelley' },
   { gutenbergId: 5200, title: 'The Metamorphosis', author: 'Franz Kafka' },
   { gutenbergId: 174, title: 'The Picture of Dorian Gray', author: 'Oscar Wilde' },
-];
-
-const HERO_BOOKS = [
-  { gutenbergId: 11, title: 'Alice in Wonderland', author: 'Lewis Carroll', tilt: '-rotate-[14deg]', y: 'lg:translate-y-2', floatDelay: '0s' },
-  { gutenbergId: 2701, title: 'Moby Dick', author: 'Herman Melville', tilt: '-rotate-[5deg]', y: 'lg:-translate-y-4', floatDelay: '0.8s' },
-  { gutenbergId: 1342, title: 'Pride and Prejudice', author: 'Jane Austen', tilt: 'rotate-0', y: 'lg:-translate-y-10', floatDelay: '1.6s' },
-  { gutenbergId: 345, title: 'Dracula', author: 'Bram Stoker', tilt: 'rotate-[5deg]', y: 'lg:-translate-y-4', floatDelay: '2.4s' },
-  { gutenbergId: 84, title: 'Frankenstein', author: 'Mary Shelley', tilt: 'rotate-[14deg]', y: 'lg:translate-y-2', floatDelay: '3.2s' },
 ];
 
 const TRENDING = [
@@ -122,7 +118,7 @@ const Home = () => {
     navigate('/search');
   };
 
-  return (
+return (
     <div className="flex flex-col w-full">
       <SEO
         title="Every book. Every idea. Found."
@@ -130,138 +126,98 @@ const Home = () => {
         canonical="/"
         structuredData={getWebSiteSchema()}
       />
-      {/* ============ HERO ============ */}
-      <section className="relative text-center pt-16 md:pt-24 pb-14 md:pb-20 overflow-hidden">
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -top-40 left-1/2 -translate-x-1/2 w-[46rem] h-[46rem] rounded-full bg-primary-500/15 dark:bg-primary-500/10 blur-[120px]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-40 -left-40 w-[30rem] h-[30rem] rounded-full bg-purple-500/10 blur-[100px]"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute top-64 -right-40 w-[30rem] h-[30rem] rounded-full bg-blue-500/10 blur-[100px]"
-        />
-
-        <div className="relative max-w-4xl mx-auto px-5 sm:px-8">
-          <Reveal>
-            <Link
-              to="/search"
-              className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-semibold text-primary-600 dark:text-primary-400 bg-primary-500/5 border border-primary-500/20 hover:bg-primary-500/10 transition-colors"
-            >
-              <Sparkles size={14} />
-              Introducing Bookland — now with a unified library
-              <ArrowRight size={14} />
-            </Link>
-          </Reveal>
-
-          <Reveal delay={100}>
-            <h1 className="mt-7 font-display font-extrabold tracking-tightest text-5xl sm:text-7xl lg:text-[84px] leading-[1.02] text-ink dark:text-white">
-              Every book.
-              <br />
-              <span className="text-gradient">Every idea.</span>
-              <br />
-              Found.
-            </h1>
-          </Reveal>
-
-          <Reveal delay={200}>
-            <p className="mt-6 text-lg md:text-2xl font-medium text-muted dark:text-dark-muted leading-relaxed max-w-2xl mx-auto">
-              Search millions of books, research papers, and articles from the
-              world&apos;s open libraries — and read them right here.
-            </p>
-          </Reveal>
-
-          <Reveal delay={300}>
-            <div className="mt-9 max-w-2xl mx-auto">
-              <form onSubmit={handleSearch}>
-                <div className="relative">
-                  <SearchIcon
-                    size={20}
-                    className="absolute left-5 top-1/2 -translate-y-1/2 text-muted"
-                  />
-                  <input
-                    type="text"
-                    placeholder="Search the world's knowledge..."
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    className="input-base py-4 pl-13 pr-36 text-[17px] shadow-card dark:shadow-card-dark"
-                    style={{ paddingLeft: '3.25rem' }}
-                  />
-                  <button
-                    type="submit"
-                    className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1.5 bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-primary-700 transition-all active:scale-95 shadow-button"
-                  >
-                    Search
-                  </button>
-                </div>
-              </form>
-            </div>
-          </Reveal>
-
-          <Reveal delay={380}>
-            <div className="mt-5 flex justify-center">
-              <SegmentedControl
-                options={TYPE_OPTIONS}
-                value={contentType}
-                onChange={setContentTypeState}
-              />
-            </div>
-          </Reveal>
-
-          <Reveal delay={450}>
-            <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
-              <button onClick={() => goToSearch()} className="btn-primary min-w-[10rem]">
-                Start exploring <ArrowRight size={16} />
-              </button>
-              <Link to="/search" className="text-[15px] font-semibold text-primary-600 hover:text-primary-700 inline-flex items-center gap-1 transition-colors px-3 py-2">
-                Learn more <ArrowRight size={15} />
-              </Link>
-            </div>
-          </Reveal>
-
-          {/* Hero book collage */}
-          <Reveal delay={500} className="mt-16 md:mt-20">
-            <div className="relative flex items-end justify-center gap-3 sm:gap-5">
-              {HERO_BOOKS.map((book, i) => (
-                <button
-                  key={book.gutenbergId}
-                  onClick={() => navigate(`/book/gutenberg-${book.gutenbergId}`)}
-                  className="group block focus:outline-none"
-                  style={{ zIndex: i === 2 ? 10 : undefined }}
+      {/* ============ 3D HERO ============ */}
+      <section className="relative w-full h-[90vh] min-h-[600px] max-h-[900px]">
+        <Suspense
+          fallback={
+            <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-purple-500/10 to-transparent" />
+          }
+        >
+          <Hero3D
+            className="absolute inset-0"
+            onBookClick={(bookId) => navigate(`/book/gutenberg-${bookId}`)}
+          />
+        </Suspense>
+        <div className="absolute inset-0 flex flex-col items-center justify-center z-10 pointer-events-none">
+          <div className="pointer-events-auto max-w-4xl mx-auto px-5 sm:px-8 text-center">
+            <div className="mt-12 md:mt-20">
+              <Reveal>
+                <Link
+                  to="/search"
+                  className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-[13px] font-semibold text-primary-600 dark:text-primary-400 bg-primary-500/5 border border-primary-500/20 hover:bg-primary-500/10 transition-colors backdrop-blur-sm"
                 >
-                  <div
-                    className={`relative w-16 h-24 sm:w-24 sm:h-36 md:w-28 md:h-44 aspect-[2/3] rounded-lg md:rounded-xl overflow-hidden bg-slate-200 dark:bg-dark-raised shadow-lift ring-1 ring-black/5 dark:ring-white/10 transition-transform duration-500 ease-out group-hover:scale-105 group-hover:rotate-0 group-hover:-translate-y-2 group-hover:[animation:none] ${
-                      book.tilt
-                    } ${book.y}`}
-                    style={
-                      {
-                        '--tilt': '0deg',
-                        animation: `float-tilt 6s ease-in-out infinite`,
-                        animationDelay: book.floatDelay,
-                      } as React.CSSProperties
-                    }
-                  >
-                    <img
-                      src={gutenbergCover(book.gutenbergId)}
-                      alt={`Cover of ${book.title}`}
-                      loading="lazy"
-                      className="w-full h-full object-cover"
-                      onError={(e) => {
-                        (e.target as HTMLImageElement).style.display = 'none';
-                      }}
-                    />
-                  </div>
-                </button>
-              ))}
+                  <Sparkles size={14} />
+                  Introducing Bookland — now with a unified library
+                  <ArrowRight size={14} />
+                </Link>
+              </Reveal>
+
+              <Reveal delay={100}>
+                <h1 className="mt-7 font-display font-extrabold tracking-tightest text-5xl sm:text-7xl lg:text-[84px] leading-[1.02] text-white drop-shadow-[0_4px_20px_rgba(0,0,0,0.3)]">
+                  Every book.
+                  <br />
+                  <span className="text-gradient">Every idea.</span>
+                  <br />
+                  Found.
+                </h1>
+              </Reveal>
+
+              <Reveal delay={200}>
+                <p className="mt-6 text-lg md:text-2xl font-medium text-white/90 drop-shadow-lg leading-relaxed max-w-2xl mx-auto">
+                  Search millions of books, research papers, and articles from the
+                  world&apos;s open libraries — and read them right here.
+                </p>
+              </Reveal>
+
+              <Reveal delay={300}>
+                <div className="mt-9 max-w-2xl mx-auto">
+                  <form onSubmit={handleSearch}>
+                    <div className="relative">
+                      <SearchIcon
+                        size={20}
+                        className="absolute left-5 top-1/2 -translate-y-1/2 text-white/60"
+                      />
+                      <input
+                        type="text"
+                        placeholder="Search the world's knowledge..."
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        className="input-base py-4 pl-13 pr-36 text-[17px] bg-white/90 dark:bg-dark-surface/90 backdrop-blur-sm shadow-xl border border-white/20 dark:border-dark-border/20"
+                        style={{ paddingLeft: '3.25rem' }}
+                      />
+                      <button
+                        type="submit"
+                        className="absolute right-2 top-1/2 -translate-y-1/2 inline-flex items-center gap-1.5 bg-primary-600 text-white text-sm font-semibold px-5 py-2.5 rounded-full hover:bg-primary-700 transition-all active:scale-95 shadow-button"
+                      >
+                        Search
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </Reveal>
+
+              <Reveal delay={380}>
+                <div className="mt-5 flex justify-center">
+                  <SegmentedControl
+                    options={TYPE_OPTIONS}
+                    value={contentType}
+                    onChange={setContentTypeState}
+                  />
+                </div>
+              </Reveal>
+
+              <Reveal delay={450}>
+                <div className="mt-8 flex flex-col sm:flex-row items-center justify-center gap-3">
+                  <button onClick={() => goToSearch()} className="btn-primary min-w-[10rem]">
+                    Start exploring <ArrowRight size={16} />
+                  </button>
+                  <Link to="/search" className="text-[15px] font-semibold text-white/90 hover:text-white inline-flex items-center gap-1 transition-colors px-3 py-2">
+                    Learn more <ArrowRight size={15} />
+                  </Link>
+                </div>
+              </Reveal>
             </div>
-            <div
-              aria-hidden
-              className="mx-auto mt-10 h-px w-2/3 bg-gradient-to-r from-transparent via-primary-500/30 to-transparent"
-            />
-          </Reveal>
+          </div>
         </div>
       </section>
 

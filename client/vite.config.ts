@@ -68,14 +68,21 @@ export default defineConfig({
   build: {
     rollupOptions: {
       output: {
-        manualChunks: {
-          vendor: ['react', 'react-dom', 'react-router-dom'],
-          query: ['@tanstack/react-query'],
-          ui: ['lucide-react'],
-          zustand: ['zustand'],
+        manualChunks(id: string) {
+          if (!id.includes('node_modules')) return undefined;
+          if (/[/\\\\]node_modules[/\\\\](three([/\\\\]|$)|three-stdlib|troika-three-text|maath|@react-three[/\\\\]|@react-spring[/\\\\]|detect-gpu|@use-gesture[/\\\\]|tunnel-rat|suspend-react|its-fine|camera-controls|three-mesh-bvh|@monogrid|stats-gl|stats\.js|meshline)/.test(id)) {
+            return 'three';
+          }
+          if (/[/\\\\]node_modules[/\\\\](react([/\\\\]|$)|react-dom[/\\\\]|react-router[/\\\\]|react-router-dom[/\\\\]|react-helmet-async|scheduler[/\\\\]|@remix-run[/\\\\]|history[/\\\\]|use-sync-external-store)/.test(id)) {
+            return 'vendor';
+          }
+          if (/[/\\\\]node_modules[/\\\\]@tanstack[/\\\\]/.test(id)) return 'query';
+          if (/[/\\\\]node_modules[/\\\\]lucide-react[/\\\\]/.test(id)) return 'ui';
+          if (/[/\\\\]node_modules[/\\\\]zustand[/\\\\]/.test(id)) return 'zustand';
+          return undefined;
         },
       },
     },
-    chunkSizeWarningLimit: 500,
+    chunkSizeWarningLimit: 900,
   },
 })
