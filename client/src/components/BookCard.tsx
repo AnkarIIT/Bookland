@@ -2,14 +2,13 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { BookOpen, ArrowUpRight, BookMarked, FileText } from 'lucide-react';
 import type { Book } from '../types';
+import { BookCover } from './ui';
 
 interface BookCardProps {
   book: Book;
 }
 
 const BookCard: React.FC<BookCardProps> = ({ book }) => {
-  const [imageFailed, setImageFailed] = React.useState(false);
-
   const authors = book.authors && book.authors.length > 0 ? book.authors.join(', ') : 'Unknown Author';
 
   return (
@@ -18,19 +17,14 @@ const BookCard: React.FC<BookCardProps> = ({ book }) => {
       className="group flex items-center gap-5 p-4 md:p-5 rounded-2xl border border-transparent hover:border-slate-200 dark:hover:border-dark-border bg-transparent hover:bg-surface dark:hover:bg-dark-surface transition-all duration-200"
     >
       {/* Cover */}
-      <div className="w-14 h-20 md:w-16 md:h-24 rounded-lg overflow-hidden bg-slate-100 dark:bg-dark-raised flex items-center justify-center shrink-0 shadow-soft">
-        {book.cover_url && !imageFailed ? (
-          <img
-            src={book.cover_url}
-            alt={`Cover of ${book.title}`}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-            onError={() => setImageFailed(true)}
-          />
-        ) : (
-          <BookOpen size={28} className="text-muted opacity-50" strokeWidth={1.5} />
-        )}
-      </div>
+      <BookCover
+        id={book.id}
+        src={book.cover_url || ''}
+        alt={`Cover of ${book.title}`}
+        width={56}
+        height={80}
+        className="shrink-0 shadow-soft"
+      />
 
       {/* Meta */}
       <div className="min-w-0 flex-1">

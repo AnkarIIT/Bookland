@@ -20,6 +20,7 @@ import {
 import { useSearchStore, type ContentType } from '../store/useSearchStore';
 import SegmentedControl from '../components/SegmentedControl';
 import Reveal from '../components/Reveal';
+import { SEO, getWebSiteSchema } from '../components/SEO';
 
 const TYPE_OPTIONS: { value: ContentType; label: string }[] = [
   { value: 'all', label: 'Everything' },
@@ -123,6 +124,12 @@ const Home = () => {
 
   return (
     <div className="flex flex-col w-full">
+      <SEO
+        title="Every book. Every idea. Found."
+        description="Search millions of books, research papers, and articles from the world's open libraries — and read them right here."
+        canonical="/"
+        structuredData={getWebSiteSchema()}
+      />
       {/* ============ HERO ============ */}
       <section className="relative text-center pt-16 md:pt-24 pb-14 md:pb-20 overflow-hidden">
         <div

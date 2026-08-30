@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Mail, Lock, User as UserIcon } from 'lucide-react';
 import { useAuthStore } from '../store/useAuthStore';
+import { SEO } from '../components/SEO';
 
 interface AuthPageProps {
   mode: 'login' | 'register';
@@ -43,6 +44,12 @@ const AuthPage: React.FC<AuthPageProps> = ({ mode }) => {
 
   return (
     <div className="flex items-center justify-center min-h-[60vh] w-full animate-fade-up">
+      <SEO
+        title={isLogin ? 'Sign In' : 'Create Account'}
+        description={isLogin ? 'Sign in to your Bookland account' : 'Create a free Bookland account'}
+        canonical={isLogin ? '/login' : '/register'}
+        noindex={true}
+      />
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
           <div className="w-14 h-14 mx-auto mb-5 rounded-2xl bg-primary-600 shadow-button flex items-center justify-center">

@@ -1,22 +1,38 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, Suspense, lazy } from 'react';
 import { Routes, Route, Link, useLocation, useNavigate } from 'react-router-dom';
-import Home from './pages/Home';
-import Search from './pages/Search';
-import AuthPage from './pages/Auth';
-import BookDetailPage from './pages/BookDetail';
-import ReaderPage from './pages/Reader';
-import NotFound from './pages/NotFound';
 import ErrorBoundary from './components/ErrorBoundary';
 import { Moon, Sun, Settings2, LogOut, User as UserIcon, BookOpen } from 'lucide-react';
 import { useThemeStore } from './store/useThemeStore';
 import { useAuthStore } from './store/useAuthStore';
 import { useSearchStore, type ContentType } from './store/useSearchStore';
 
+const Home = lazy(() => import('./pages/Home'));
+const Search = lazy(() => import('./pages/Search'));
+const AuthPage = lazy(() => import('./pages/Auth'));
+const BookDetailPage = lazy(() => import('./pages/BookDetail'));
+const ReaderPage = lazy(() => import('./pages/Reader'));
+const NotFound = lazy(() => import('./pages/NotFound'));
+
 const NAV_ITEMS: { label: string; type: ContentType }[] = [
   { label: 'Books', type: 'book' },
   { label: 'Papers', type: 'paper' },
   { label: 'Articles', type: 'article' },
 ];
+
+function PageWrapper({ children }: { children: React.ReactNode }) {
+  return (
+    <Suspense fallback={
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <div className="flex flex-col items-center gap-4 text-muted">
+          <div className="w-10 h-10 border-3 border-primary-600 border-t-transparent rounded-full animate-spin" />
+          <p className="font-semibold text-sm">Loading…</p>
+        </div>
+      </div>
+    }>
+      {children}
+    </Suspense>
+  );
+}
 
 function App() {
   const { theme, toggleTheme } = useThemeStore();
@@ -116,13 +132,13 @@ function App() {
       >
         <ErrorBoundary>
           <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/search" element={<Search />} />
-            <Route path="/book/:id" element={<BookDetailPage />} />
-            <Route path="/read/:kind/:id" element={<ReaderPage />} />
-            <Route path="/login" element={<AuthPage mode="login" />} />
-            <Route path="/register" element={<AuthPage mode="register" />} />
-            <Route path="*" element={<NotFound />} />
+            <Route path="/" element={<PageWrapper><Home /></PageWrapper>} />
+            <Route path="/search" element={<PageWrapper><Search /></PageWrapper>} />
+            <Route path="/book/:id" element={<PageWrapper><BookDetailPage /></PageWrapper>} />
+            <Route path="/read/:kind/:id" element={<PageWrapper><ReaderPage /></PageWrapper>} />
+            <Route path="/login" element={<PageWrapper><AuthPage mode="login" /></PageWrapper>} />
+            <Route path="/register" element={<PageWrapper><AuthPage mode="register" /></PageWrapper>} />
+            <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
           </Routes>
         </ErrorBoundary>
       </main>

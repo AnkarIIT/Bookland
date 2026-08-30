@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, BookOpen, Loader2, Info, Calendar, Globe, FileText, Building2, BookMarked } from 'lucide-react';
 import { apiFetch } from '../lib/api';
 import type { BookDetail } from '../types';
+import { SEO, getBookSchema, getBreadcrumbSchema } from '../components/SEO';
 
 const BookDetailPage: React.FC = () => {
   const { id } = useParams<{ id: string }>();
@@ -61,9 +62,37 @@ const BookDetailPage: React.FC = () => {
   }
 
   const authors = book.authors?.join(', ') || 'Unknown Author';
+  const readUrl = book.readable ? `/read/${book.read_kind}/${book.read_id}` : undefined;
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Search', url: '/search' },
+    { name: book.title, url: '' },
+  ];
 
   return (
     <div className="animate-fade-up">
+      <SEO
+        title={book.title}
+        description={book.description || `Read ${book.title} by ${authors} on Bookland.`}
+        canonical={`/book/${book.id}`}
+        ogImage={book.cover_url ?? undefined}
+        structuredData={[
+          getBookSchema({
+            title: book.title,
+            authors: book.authors,
+            isbn13: book.isbn_13 ?? undefined,
+            publishedYear: book.published_year ?? undefined,
+            description: book.description ?? undefined,
+            coverUrl: book.cover_url ?? undefined,
+            publisher: book.publisher ?? undefined,
+            pageCount: book.page_count ?? undefined,
+            language: book.language ?? undefined,
+            isFree: book.readable,
+            readUrl,
+          }),
+          getBreadcrumbSchema(breadcrumbs),
+        ]}
+      />
       <Link
         to="/search"
         className="inline-flex items-center gap-1.5 text-sm font-semibold text-muted dark:text-dark-muted hover:text-ink dark:hover:text-white transition-colors mb-10"

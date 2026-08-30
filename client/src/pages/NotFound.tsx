@@ -1,10 +1,16 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Search as SearchIcon } from 'lucide-react';
+import { SEO } from '../components/SEO';
 
 const NotFound: React.FC = () => {
   return (
     <div className="flex flex-col items-center text-center py-24 animate-fade-up">
+      <SEO
+        title="Page Not Found"
+        description="The page you're looking for doesn't exist or has been moved."
+        noindex={true}
+      />
       <p className="font-display font-extrabold tracking-tightest text-[7rem] leading-none text-slate-100 dark:text-dark-raised select-none">
         404
       </p>

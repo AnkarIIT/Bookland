@@ -1,8 +1,11 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useMemo } from 'react';
 import { useSearchStore, type ContentType } from '../store/useSearchStore';
 import BookCard from '../components/BookCard';
 import SegmentedControl from '../components/SegmentedControl';
 import { Search as SearchIcon, Info, Library, FlaskConical, Newspaper, ArrowLeft } from 'lucide-react';
+import { SEO, getBreadcrumbSchema } from '../components/SEO';
+
+const DEBOUNCE_DELAY = 300;
 
 const TYPE_OPTIONS: { value: ContentType; label: string }[] = [
   { value: 'all', label: 'Everything' },
@@ -26,12 +29,22 @@ const Search = () => {
   const { searchQuery, contentType, results, isLoading, error, performSearch, setSearchQuery, setContentType } = useSearchStore();
   const [localQuery, setLocalQuery] = useState(searchQuery);
 
+  // Debounced query for API calls
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
+
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedQuery(localQuery.trim());
+    }, DEBOUNCE_DELAY);
+    return () => clearTimeout(timer);
+  }, [localQuery]);
+
   // Auto-search when landing with a query already set
   useEffect(() => {
-    if (searchQuery && results.length === 0 && !isLoading && !error && (contentType === 'all' || contentType === 'book')) {
-      performSearch(searchQuery);
+    if (debouncedQuery && results.length === 0 && !isLoading && !error && (contentType === 'all' || contentType === 'book')) {
+      performSearch(debouncedQuery);
     }
-  }, [searchQuery, results.length, isLoading, error, contentType, performSearch]);
+  }, [debouncedQuery, results.length, isLoading, error, contentType, performSearch]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -49,10 +62,22 @@ const Search = () => {
 
   const comingSoon = contentType === 'paper' || contentType === 'article' ? COMING_SOON[contentType] : null;
   const showComingSoon = comingSoon !== null;
-  const heading = searchQuery ? `Results for “${searchQuery}”` : 'Explore the archive';
+  const heading = debouncedQuery ? `Results for “${debouncedQuery}”` : 'Explore the archive';
+
+  const breadcrumbs = debouncedQuery
+    ? [{ name: 'Home', url: '/' }, { name: 'Search', url: '/search' }, { name: debouncedQuery, url: '' }]
+    : [{ name: 'Home', url: '/' }, { name: 'Search', url: '/search' }];
 
   return (
     <div className="animate-fade-up">
+      <SEO
+        title={heading}
+        description={debouncedQuery
+          ? `Search results for "${debouncedQuery}" across millions of books from Open Library and Project Gutenberg.`
+          : 'Explore the global archive of books, research papers, and articles.'}
+        canonical="/search"
+        structuredData={getBreadcrumbSchema(breadcrumbs)}
+      />
       {/* Search bar */}
       <div className="sticky top-14 z-40 -mx-5 sm:-mx-8 px-5 sm:px-8 py-4 bg-canvas/85 dark:bg-dark-canvas/85 backdrop-blur-2xl">
         <form onSubmit={handleSearch} className="max-w-2xl">
@@ -147,14 +172,14 @@ const Search = () => {
       )}
 
       {/* Empty */}
-      {!showComingSoon && !isLoading && !error && results.length === 0 && searchQuery && (
+      {!showComingSoon && !isLoading && !error && results.length === 0 && debouncedQuery && (
         <div className="flex flex-col items-center text-center py-20">
           <div className="w-16 h-16 rounded-2xl bg-slate-100 dark:bg-dark-raised text-muted flex items-center justify-center mb-6">
             <SearchIcon size={30} strokeWidth={1.5} />
           </div>
           <h2 className="font-display font-bold text-2xl text-ink dark:text-white">No matches in the archive</h2>
           <p className="mt-3 max-w-md text-muted dark:text-dark-muted font-medium">
-            We couldn't find anything for “{searchQuery}”. Try a broader keyword, or check your spelling.
+            We couldn't find anything for “{debouncedQuery}”. Try a broader keyword, or check your spelling.
           </p>
         </div>
       )}

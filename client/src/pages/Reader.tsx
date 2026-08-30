@@ -3,6 +3,7 @@ import { Link, useParams } from 'react-router-dom';
 import { ArrowLeft, Loader2, Minus, Plus, AlertTriangle, ExternalLink } from 'lucide-react';
 import { apiFetch } from '../lib/api';
 import type { ArchiveReadResponse, ReadResponse } from '../types';
+import { SEO, getBreadcrumbSchema } from '../components/SEO';
 
 type ReadingTheme = 'light' | 'sepia' | 'dark';
 
@@ -105,9 +106,21 @@ const ReaderPage: React.FC = () => {
   }
 
   const styles = themeStyles[readingTheme];
+  const breadcrumbs = [
+    { name: 'Home', url: '/' },
+    { name: 'Search', url: '/search' },
+    { name: title, url: '' },
+  ];
 
   return (
     <div className={`min-h-[80vh] flex flex-col ${styles.bg} rounded-3xl border border-slate-200 dark:border-dark-border overflow-hidden`}>
+      <SEO
+        title={title}
+        description={`Read ${title} on Bookland — free, distraction-free reading experience.`}
+        canonical={`/read/${kind}/${id}`}
+        noindex={true}
+        structuredData={getBreadcrumbSchema(breadcrumbs)}
+      />
       {/* Progress bar */}
       <div className="h-1 bg-slate-200 dark:bg-slate-800">
         <div className="h-full bg-primary-600 transition-all duration-150" style={{ width: `${progress}%` }} />
