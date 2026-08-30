@@ -1,0 +1,90 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String
+  passwordHash  String    @map("password_hash")
+  plan          String    @default("free")
+  createdAt     DateTime  @default(now()) @map("created_at")
+  readingHistory ReadingHistory[]
+  savedBooks    SavedBook[]
+  @@map("users")
+}
+
+model Book {
+  id            String    @id @default(uuid())
+  isbn13        String?   @unique @map("isbn_13")
+  isbn10        String?   @map("isbn_10")
+  gutenbergId   Int?      @unique @map("gutenberg_id")
+  title         String
+  subtitle      String?
+  authors       String[]
+  publisher     String?
+  publishedYear Int?      @map("published_year")
+  language      String?
+  countryCode   String?   @map("country_code")
+  genre         String[]
+  subjects      String[]
+  description   String?
+  pageCount     Int?      @map("page_count")
+  coverUrl      String?   @map("cover_url")
+  isFree        Boolean   @default(false) @map("is_free")
+  readUrl       String?   @map("read_url")
+  archiveId     String?   @map("archive_id")
+  content       String?
+  contentUrl    String?   @map("content_url")
+  filePath      String?   @map("file_path")
+  source        String?
+  createdAt     DateTime  @default(now()) @map("created_at")
+  updatedAt     DateTime  @updatedAt @map("updated_at")
+  buyLinks      BookBuyLink[]
+  readingHistory ReadingHistory[]
+  savedBooks    SavedBook[]
+  @@index([source])
+  @@index([title])
+  @@index([authors])
+  @@index([genre])
+  @@map("books")
+}
+
+model BookBuyLink {
+  id        String   @id @default(uuid())
+  bookIsbn  String   @map("book_isbn")
+  platform  String
+  url       String
+  price     Decimal? @db.Decimal(10, 2)
+  updatedAt DateTime @default(now()) @map("updated_at")
+  book      Book     @relation(fields: [bookIsbn], references: [isbn13], onDelete: Cascade)
+  @@map("book_buy_links")
+}
+
+model ReadingHistory {
+  id             String   @id @default(uuid())
+  userId         String   @map("user_id")
+  bookIsbn       String   @map("book_isbn")
+  lastPage       Int      @default(0) @map("last_page")
+  progressPercent Int     @default(0) @map("progress_percent")
+  lastReadAt     DateTime @default(now()) @map("last_read_at")
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book           Book     @relation(fields: [bookIsbn], references: [isbn13], onDelete: Cascade)
+  @@unique([userId, bookIsbn])
+  @@map("reading_history")
+}
+
+model SavedBook {
+  userId   String   @map("user_id")
+  bookIsbn String   @map("book_isbn")
+  savedAt  DateTime @default(now()) @map("saved_at")
+  user     User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  book     Book     @relation(fields: [bookIsbn], references: [isbn13], onDelete: Cascade)
+  @@id([userId, bookIsbn])
+  @@map("saved_books")
+}
