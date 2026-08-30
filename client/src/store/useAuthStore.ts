@@ -19,7 +19,7 @@ const AUTH_STORAGE_KEY = 'bookland-auth-minimal';
 
 export const useAuthStore = create<AuthState>()(
   persist(
-    (set, get) => ({
+    (set) => ({
       user: null,
       isLoading: false,
       isAuthenticated: false,

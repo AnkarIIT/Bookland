@@ -1,10 +1,12 @@
 import React, { useEffect, useRef, useState } from 'react';
 
+type RevealTag = 'div' | 'section' | 'span' | 'figure';
+
 interface RevealProps {
   children: React.ReactNode;
   className?: string;
   delay?: number;
-  as?: 'div' | 'section' | 'span' | 'figure';
+  as?: RevealTag;
 }
 
 function Reveal({ children, className = '', delay = 0, as = 'div' }: RevealProps) {
@@ -31,7 +33,7 @@ function Reveal({ children, className = '', delay = 0, as = 'div' }: RevealProps
     return () => observer.disconnect();
   }, []);
 
-  const Tag = as as React.ElementType;
+  const Tag = as;
 
   return (
     <Tag

@@ -1,6 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { BookOpen, ArrowUpRight, BookMarked, FileText } from 'lucide-react';
+import { ArrowUpRight, BookMarked, FileText } from 'lucide-react';
 import type { Book } from '../types';
 import { BookCover } from './ui';
 

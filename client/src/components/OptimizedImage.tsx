@@ -109,7 +109,6 @@ export function OptimizedImage({
 }
 
 export function BookCover({
-  id,
   src,
   alt,
   width = 100,

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useSearchStore, type ContentType } from '../store/useSearchStore';
 import BookCard from '../components/BookCard';
 import SegmentedControl from '../components/SegmentedControl';
