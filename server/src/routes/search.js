@@ -10,6 +10,7 @@ const {
   upsertGutenbergBooks,
   rowToBook,
 } = require('../lib/books');
+const { validate, searchQuerySchema } = require('../middleware/validate');
 
 const OL_SEARCH_URL = 'https://openlibrary.org/search.json';
 
@@ -42,17 +43,12 @@ async function fetchFromGutenberg(q) {
     .map(mapGutenbergDoc);
 }
 
-router.get('/', async (req, res, next) => {
+router.get('/', validate(searchQuerySchema, 'query'), async (req, res, next) => {
   try {
-    let q = (req.query.q || '').trim().slice(0, 200);
-
-    if (!q) {
-      return res.json([]);
-    }
+    const q = req.validatedQuery.q;
 
     const cacheKey = `search:all:${q.toLowerCase()}`;
 
-    // 1. Attempt cache retrieval
     if (redisClient.isReady) {
       const cachedResults = await redisClient.get(cacheKey);
       if (cachedResults) {
@@ -66,7 +62,6 @@ router.get('/', async (req, res, next) => {
     let books = [];
 
     try {
-      // 2. Query both public library sources in parallel (one failing must not lose the other)
       const [openLibraryResult, gutenbergResult] = await Promise.allSettled([
         fetchFromOpenLibrary(q),
         fetchFromGutenberg(q),
@@ -84,7 +79,6 @@ router.get('/', async (req, res, next) => {
         ...(gutenbergResult.status === 'fulfilled' ? gutenbergResult.value : []),
       ].slice(0, 30);
 
-      // 3. Persist to PostgreSQL in the background (failures are logged, never block the response)
       const olBooks = books.filter((b) => b.source === 'openlibrary');
       const gutBooks = books.filter((b) => b.source === 'gutenberg');
       Promise.allSettled([
@@ -99,14 +93,12 @@ router.get('/', async (req, res, next) => {
       });
     } catch (err) {
       console.error('Upstream fetch failed, falling back to local data:', err.message);
-      // 3b. Fallback: serve locally indexed books if upstream APIs are unreachable
       books = await searchLocalBooks(q).catch((dbErr) => {
         console.error('Local DB fallback search failed:', dbErr.message);
         return [];
       });
     }
 
-    // 4. Cache the results for 1 hour to prevent API throttling
     if (redisClient.isReady && books.length > 0) {
       await redisClient.setEx(cacheKey, 3600, JSON.stringify(books));
     }

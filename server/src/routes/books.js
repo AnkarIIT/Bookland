@@ -3,6 +3,7 @@ const router = express.Router();
 const db = require('../config/db');
 const gutenberg = require('../lib/gutenberg');
 const { parseSlug, rowToBook, upsertGutenbergBooks } = require('../lib/books');
+const { validate, bookKeySchema } = require('../middleware/validate');
 
 const OL_BOOKS_URL = 'https://openlibrary.org/api/books';
 
@@ -77,15 +78,14 @@ const getLocalBook = async (whereClause, params) => {
   return { ...rowToBook(rows[0]), ...rows[0] };
 };
 
-router.get('/:key', async (req, res, next) => {
+router.get('/:key', validate(bookKeySchema, 'params'), async (req, res, next) => {
   try {
-    const parsed = parseSlug(req.params.key);
+    const parsed = parseSlug(req.validatedParams.key);
 
     if (!parsed) {
       return res.status(400).json({ error: 'A valid book identifier is required' });
     }
 
-    // 1. Try local persistence first (a DB outage must not block upstream fallback)
     let localBook = null;
     try {
       localBook =
@@ -100,7 +100,6 @@ router.get('/:key', async (req, res, next) => {
       return res.json(localBook);
     }
 
-    // 2. Fetch from the appropriate source, then persist for future reads
     let book = null;
 
     if (parsed.kind === 'gutenberg') {

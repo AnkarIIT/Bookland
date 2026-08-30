@@ -2,6 +2,7 @@ const express = require('express');
 const router = express.Router();
 const db = require('../config/db');
 const gutenberg = require('../lib/gutenberg');
+const { validate, gutenbergReadSchema, archiveReadSchema } = require('../middleware/validate');
 
 const gutenbergContentFromDb = async (id) => {
   const { rows } = await db.query(
@@ -11,14 +12,10 @@ const gutenbergContentFromDb = async (id) => {
   return rows[0] || null;
 };
 
-router.get('/gutenberg/:id', async (req, res, next) => {
+router.get('/gutenberg/:id', validate(gutenbergReadSchema, 'params'), async (req, res, next) => {
   try {
-    const id = Number(req.params.id);
-    if (!Number.isInteger(id) || id <= 0) {
-      return res.status(400).json({ error: 'Invalid Gutenberg id' });
-    }
+    const id = req.validatedParams.id;
 
-    // 1. Serve cached content from the DB when available
     try {
       const row = await gutenbergContentFromDb(id);
       if (row && row.content) {
@@ -33,7 +30,6 @@ router.get('/gutenberg/:id', async (req, res, next) => {
       console.error('Local content lookup failed:', dbErr.message);
     }
 
-    // 2. Fetch metadata + full text from Project Gutenberg
     const doc = await gutenberg.getById(id);
     const textUrl = await gutenberg.getPlainTextUrl(doc);
     const rawText = await gutenberg.fetchText(textUrl);
@@ -43,7 +39,6 @@ router.get('/gutenberg/:id', async (req, res, next) => {
       return res.status(404).json({ error: 'No readable text found for this book' });
     }
 
-    // 3. Cache the content in the DB (best effort)
     try {
       await db.query(
         `INSERT INTO books (gutenberg_id, title, authors, source, content, content_url)
@@ -75,14 +70,10 @@ router.get('/gutenberg/:id', async (req, res, next) => {
   }
 });
 
-router.get('/archive/:id', async (req, res, next) => {
+router.get('/archive/:id', validate(archiveReadSchema, 'params'), async (req, res, next) => {
   try {
-    const id = (req.params.id || '').trim();
-    if (!id) {
-      return res.status(400).json({ error: 'Invalid archive.org identifier' });
-    }
+    const id = req.validatedParams.id;
 
-    // Look up local metadata first, but the embed works regardless
     let title = null;
     try {
       const { rows } = await db.query('SELECT title FROM books WHERE archive_id = $1', [id]);
