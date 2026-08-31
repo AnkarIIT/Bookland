@@ -12,6 +12,11 @@ import searchRoutes from './routes/search';
 import bookRoutes from './routes/books';
 import authRoutes from './routes/auth';
 import readRoutes from './routes/read';
+import collectionRoutes from './routes/collections';
+import historyRoutes from './routes/history';
+import paperRoutes from './routes/paper';
+import scriptRoutes from './routes/scripts';
+import multiSourceSearchRoutes from './routes/multi-source-search';
 import { connectRedis, closeRedis } from './config/redis';
 import { db, closePool } from './config/db';
 import { runMigrations } from './config/migrate';
@@ -34,9 +39,9 @@ app.use(helmet({
       scriptSrc: ["'self'"],
       styleSrc: ["'self'", "'unsafe-inline'", 'https://fonts.googleapis.com'],
       fontSrc: ["'self'", 'https://fonts.gstatic.com'],
-      imgSrc: ["'self'", 'data:', 'https://covers.openlibrary.org', 'https://www.gutenberg.org'],
+      imgSrc: ["'self'", 'data:', 'https://covers.openlibrary.org', 'https://www.gutenberg.org', 'https://arxiv.org', 'https://export.arxiv.org', 'https://api.crossref.org', 'https://archive.org', 'https://dopiahos.org', 'https://digitalpalaeography.org'],
       connectSrc: ["'self'", clientUrl],
-      frameSrc: ["'self'", 'https://archive.org'],
+      frameSrc: ["'self'", 'https://archive.org', 'https://www.youtube.com'],
     },
   } : false,
   crossOriginEmbedderPolicy: false,
@@ -104,6 +109,11 @@ app.use('/api/search', searchLimiter, searchRoutes);
 app.use('/api/books', bookRoutes);
 app.use('/api/auth', authLimiter, authRoutes);
 app.use('/api/read', readRoutes);
+app.use('/api/collections', collectionRoutes);
+app.use('/api/history', historyRoutes);
+app.use('/api/papers', searchLimiter, paperRoutes);
+app.use('/api/scripts', searchLimiter, scriptRoutes);
+app.use('/api/all-sources', searchLimiter, multiSourceSearchRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

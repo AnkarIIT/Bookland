@@ -88,3 +88,50 @@ model SavedBook {
   @@id([userId, bookIsbn])
   @@map("saved_books")
 }
+
+// Research Papers
+model Paper {
+  id          String   @id @default(uuid())
+  arxivId     String?  @unique @map("arxiv_id")
+  doi         String?  @unique @map("doi")
+  title       String
+  authors     String[]
+  abstract    String?
+  publishedYear Int?    @map("published_year")
+  journal     String?
+  publisher   String?
+  pages       String?
+  pdfUrl      String?  @map("pdf_url")
+  language    String?
+  categories  String[]
+  source      String   @default("crossref")
+  isFree      Boolean  @default(false) @map("is_free")
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([arxivId])
+  @@index([doi])
+  @@index([title])
+  @@map("papers")
+}
+
+// Ancient Scripts
+model Script {
+  id          String   @id @default(uuid())
+  externalId  String   @unique @map("external_id")
+  title       String
+  authors     String[]
+  description String?
+  language    String
+  scriptType  String   @map("script_type")
+  date        String?
+  textUrl     String?  @map("text_url")
+  pdfUrl      String?  @map("pdf_url")
+  coverUrl    String?  @map("cover_url")
+  source      String
+  createdAt   DateTime @default(now()) @map("created_at")
+  
+  @@index([externalId])
+  @@index([language])
+  @@index([title])
+  @@map("scripts")
+}
