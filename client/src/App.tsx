@@ -11,6 +11,7 @@ const Search = lazy(() => import('./pages/Search'));
 const AuthPage = lazy(() => import('./pages/Auth'));
 const BookDetailPage = lazy(() => import('./pages/BookDetail'));
 const ReaderPage = lazy(() => import('./pages/Reader'));
+const Info = lazy(() => import('./pages/Info'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const NAV_ITEMS: { label: string; type: ContentType }[] = [
@@ -138,6 +139,9 @@ function App() {
             <Route path="/read/:kind/:id" element={<PageWrapper><ReaderPage /></PageWrapper>} />
             <Route path="/login" element={<PageWrapper><AuthPage mode="login" /></PageWrapper>} />
             <Route path="/register" element={<PageWrapper><AuthPage mode="register" /></PageWrapper>} />
+            <Route path="/about" element={<PageWrapper><Info kind="about" /></PageWrapper>} />
+            <Route path="/privacy" element={<PageWrapper><Info kind="privacy" /></PageWrapper>} />
+            <Route path="/terms" element={<PageWrapper><Info kind="terms" /></PageWrapper>} />
             <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
           </Routes>
         </ErrorBoundary>
@@ -149,9 +153,9 @@ function App() {
             Bookland — books, papers & articles, one search away.
           </p>
           <div className="flex items-center gap-6 text-sm font-medium text-muted dark:text-dark-muted">
-            <a href="#" className="hover:text-ink dark:hover:text-white transition-colors">About</a>
-            <a href="#" className="hover:text-ink dark:hover:text-white transition-colors">Privacy</a>
-            <a href="#" className="hover:text-ink dark:hover:text-white transition-colors">Terms</a>
+            <Link to="/about" className="hover:text-ink dark:hover:text-white transition-colors">About</Link>
+            <Link to="/privacy" className="hover:text-ink dark:hover:text-white transition-colors">Privacy</Link>
+            <Link to="/terms" className="hover:text-ink dark:hover:text-white transition-colors">Terms</Link>
           </div>
         </div>
         <div className="border-t border-slate-200/70 dark:border-dark-border/70">

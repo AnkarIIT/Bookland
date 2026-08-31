@@ -18,7 +18,7 @@ const HERO_BOOKS = [
 const gutenbergCover = (id: number) =>
   `https://www.gutenberg.org/cache/epub/${id}/pg${id}.cover.medium.jpg`;
 
-function HeroScene({ onBookClick }: { onBookClick?: (id: number) => void }) {
+function HeroScene({ onBookClick, reduceMotion }: { onBookClick?: (id: number) => void; reduceMotion?: boolean }) {
   const idByCover = new Map(HERO_BOOKS.map((b) => [gutenbergCover(b.id), b.id]));
 
   return (
@@ -49,6 +49,7 @@ function HeroScene({ onBookClick }: { onBookClick?: (id: number) => void }) {
         }))}
         centerPosition={[0, -0.5, 0]}
         spread={1.4}
+        reduceMotion={reduceMotion}
         onBookClick={(book) => {
           const id = idByCover.get(book.coverUrl);
           if (id) onBookClick?.(id);
@@ -58,7 +59,7 @@ function HeroScene({ onBookClick }: { onBookClick?: (id: number) => void }) {
   );
 }
 
-function ParticleField() {
+function ParticleField({ reduceMotion = false }: { reduceMotion?: boolean }) {
   const pointsRef = useRef<THREE.Points>(null);
   const { viewport } = useThree();
   const isMobile = viewport.width < 768;
@@ -70,7 +71,7 @@ function ParticleField() {
   }, []);
 
   useFrame((state, delta) => {
-    if (!pointsRef.current || isMobile) return;
+    if (!pointsRef.current || isMobile || reduceMotion) return;
     const positions = pointsRef.current.geometry.attributes.position.array;
     const originalPositions = (pointsRef.current.geometry.attributes.position as any).originalPositions;
     const time = state.clock.getElapsedTime();
@@ -128,24 +129,36 @@ function ParticleField() {
   );
 }
 
+function supportsWebGL() {
+  if (typeof window === 'undefined') return true;
+  try {
+    const canvas = document.createElement('canvas');
+    return !!(
+      window.WebGLRenderingContext &&
+      (canvas.getContext('webgl') || canvas.getContext('experimental-webgl'))
+    );
+  } catch {
+    return false;
+  }
+}
+
 export function Hero3D({ className = '', style, onBookClick }: { className?: string; style?: React.CSSProperties; onBookClick?: (bookId: number) => void }) {
-  const [mounted, setMounted] = useState(false);
-  const prefersReducedMotion = typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const [webglOk] = useState(supportsWebGL);
+  const [reduceMotion, setReduceMotion] = useState(false);
 
   useEffect(() => {
-    if (!prefersReducedMotion) {
-      setMounted(true);
-    }
-  }, [prefersReducedMotion]);
+    if (typeof window === 'undefined') return;
+    const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const update = (matches: boolean) => setReduceMotion(matches);
+    update(mq.matches);
+    mq.addEventListener('change', (event) => update(event.matches));
+    return () => mq.removeEventListener('change', (event) => update(event.matches));
+  }, []);
 
-  if (!mounted) {
+  if (!webglOk) {
     return (
       <div className={`relative w-full h-full ${className}`} style={style}>
         <div className="absolute inset-0 bg-gradient-to-br from-primary-500/10 via-purple-500/10 to-transparent" />
-        <div className="absolute inset-0 flex items-center justify-center">
-          <div className="w-12 h-12 border-3 border-primary-600 border-t-transparent rounded-full animate-spin" />
-        </div>
       </div>
     );
   }
@@ -159,10 +172,10 @@ export function Hero3D({ className = '', style, onBookClick }: { className?: str
       onLoad={() => console.log('3D Hero loaded')}
     >
       <Suspense fallback={null}>
-        <ParticleField />
+        <ParticleField reduceMotion={reduceMotion} />
       </Suspense>
       <Suspense fallback={null}>
-        <HeroScene onBookClick={onBookClick} />
+        <HeroScene reduceMotion={reduceMotion} onBookClick={onBookClick} />
       </Suspense>
 
       <Html

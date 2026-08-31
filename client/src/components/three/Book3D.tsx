@@ -322,11 +322,13 @@ export function HeroBookStack({
   books,
   centerPosition = [0, 0, 0],
   spread = 1.2,
+  reduceMotion = false,
   onBookClick,
 }: {
   books: Array<{ coverUrl: string; title: string; author: string; tilt?: number; yOffset?: number }>;
   centerPosition?: [number, number, number];
   spread?: number;
+  reduceMotion?: boolean;
   onBookClick?: (book: { coverUrl: string; title: string; author: string }) => void;
 }) {
   return (
@@ -345,7 +347,7 @@ export function HeroBookStack({
           ]}
           rotation={[book.tilt || 0, 0, 0]}
           scale={i === Math.floor(books.length / 2) ? 1.2 : 1}
-          floating
+          floating={!reduceMotion}
           floatAmplitude={0.15}
           floatSpeed={0.6 + i * 0.15}
           tiltOnHover
