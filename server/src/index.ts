@@ -17,6 +17,7 @@ import historyRoutes from './routes/history';
 import paperRoutes from './routes/paper';
 import scriptRoutes from './routes/scripts';
 import multiSourceSearchRoutes from './routes/multi-source-search';
+import sourceDirectoryRoutes from './routes/source-directory';
 import { connectRedis, closeRedis } from './config/redis';
 import { db, closePool } from './config/db';
 import { runMigrations } from './config/migrate';
@@ -114,6 +115,7 @@ app.use('/api/history', historyRoutes);
 app.use('/api/papers', searchLimiter, paperRoutes);
 app.use('/api/scripts', searchLimiter, scriptRoutes);
 app.use('/api/all-sources', searchLimiter, multiSourceSearchRoutes);
+app.use('/api/sources', sourceDirectoryRoutes);
 
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', timestamp: new Date().toISOString() });

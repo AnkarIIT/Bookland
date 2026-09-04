@@ -12,6 +12,7 @@ const AuthPage = lazy(() => import('./pages/Auth'));
 const BookDetailPage = lazy(() => import('./pages/BookDetail'));
 const ReaderPage = lazy(() => import('./pages/Reader'));
 const Info = lazy(() => import('./pages/Info'));
+const Sources = lazy(() => import('./pages/Sources'));
 const NotFound = lazy(() => import('./pages/NotFound'));
 
 const NAV_ITEMS: { label: string; type: ContentType }[] = [
@@ -86,6 +87,16 @@ function App() {
                   {item.label}
                 </button>
               ))}
+              <Link
+                to="/sources"
+                className={`hidden md:block text-sm font-medium px-3 py-1.5 rounded-full transition-colors ${
+                  location.pathname === '/sources'
+                    ? 'text-primary-600'
+                    : 'text-muted hover:text-ink dark:hover:text-white'
+                }`}
+              >
+                Sources
+              </Link>
             </nav>
 
             <div className="flex items-center gap-1.5">
@@ -142,6 +153,7 @@ function App() {
             <Route path="/about" element={<PageWrapper><Info kind="about" /></PageWrapper>} />
             <Route path="/privacy" element={<PageWrapper><Info kind="privacy" /></PageWrapper>} />
             <Route path="/terms" element={<PageWrapper><Info kind="terms" /></PageWrapper>} />
+            <Route path="/sources" element={<PageWrapper><Sources /></PageWrapper>} />
             <Route path="*" element={<PageWrapper><NotFound /></PageWrapper>} />
           </Routes>
         </ErrorBoundary>
@@ -154,6 +166,7 @@ function App() {
           </p>
           <div className="flex items-center gap-6 text-sm font-medium text-muted dark:text-dark-muted">
             <Link to="/about" className="hover:text-ink dark:hover:text-white transition-colors">About</Link>
+            <Link to="/sources" className="hover:text-ink dark:hover:text-white transition-colors">Sources</Link>
             <Link to="/privacy" className="hover:text-ink dark:hover:text-white transition-colors">Privacy</Link>
             <Link to="/terms" className="hover:text-ink dark:hover:text-white transition-colors">Terms</Link>
           </div>
