@@ -38,7 +38,7 @@ async function searchPerseus(query: string, maxResults = 25): Promise<ScriptEntr
     
     if (!response.ok) return results;
     
-    const data = await response.json();
+    const data = await response.json() as any;
     
     for (const item of data?.results || []) {
       results.push({
@@ -71,7 +71,7 @@ async function searchDLI(query: string, maxResults = 25): Promise<ScriptEntry[]>
     
     if (!response.ok) return results;
     
-    const data = await response.json();
+    const data = await response.json() as any;
     
     for (const item of data.docs || []) {
       results.push({
@@ -148,7 +148,7 @@ async function searchDharma(query: string, maxResults = 25): Promise<ScriptEntry
     
     if (!response.ok) return results;
     
-    const data = await response.json();
+    const data = await response.json() as any;
     
     for (const item of data?.items || data || []) {
       results.push({
@@ -199,7 +199,7 @@ function mapToScript(entry: ScriptEntry, source: string): any {
 }
 
 export const ancientScripts = {
-  search: async (query: string, type?: 'all' | 'perseus' | 'dlindia' | 'gutenberg' | 'dhd'): Promise<any[]> => {
+  search: async (query: string, type?: 'all' | 'perseus' | 'dlindia' | 'gutenberg' | 'dhd', limit = 50): Promise<any[]> => {
     const results: any[] = [];
     
     if (type === 'all' || type === 'perseus') {
@@ -222,7 +222,7 @@ export const ancientScripts = {
       results.push(...dharma.map(r => mapToScript(r, 'dhd')));
     }
     
-    return results.slice(0, 50);
+    return results.slice(0, limit);
   },
   
   getById: async (id: string): Promise<any | null> => {
@@ -238,7 +238,7 @@ export const ancientScripts = {
           `https://archive.org/services/search/v1/scrape.json?query=${identifier}&fields=title,creator,description,date,languages&pageSize=1`
         );
         if (response.ok) {
-          const data = await response.json();
+          const data = await response.json() as any;
           const item = data.docs?.[0];
           if (item) {
             return mapToScript({

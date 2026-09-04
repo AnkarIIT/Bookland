@@ -28,37 +28,45 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
     
     const results: any[] = [];
-    
+
+    const labels: Array<{ name: string; promise: Promise<{ items: any[]; source: string }> }> = [];
     if (type === 'all' || type === 'books') {
-      try {
-        const books = await searchBooks(q, Math.ceil(limit / 3));
-        books.forEach(b => b._source = 'book');
-        results.push(...books);
-      } catch (e) {
-        console.error('Book search error:', e);
-      }
+      labels.push({
+        name: 'book',
+        promise: searchBooks(q, Math.ceil(limit / 3)).then((books) => ({
+          items: books.map((b) => ({ ...b, _source: 'book' })),
+          source: 'book',
+        })),
+      });
     }
-    
     if (type === 'all' || type === 'papers') {
-      try {
-        const paperResults = await papers.search(q, 'all', Math.ceil(limit / 3));
-        paperResults.forEach(p => p._source = 'paper');
-        results.push(...paperResults);
-      } catch (e) {
-        console.error('Paper search error:', e);
-      }
+      labels.push({
+        name: 'paper',
+        promise: papers.search(q, 'all', Math.ceil(limit / 3)).then((paperResults) => ({
+          items: paperResults.map((p) => ({ ...p, _source: 'paper' })),
+          source: 'paper',
+        })),
+      });
     }
-    
     if (type === 'all' || type === 'scripts') {
-      try {
-        const scriptResults = await ancientScripts.search(q, 'all', Math.ceil(limit / 3));
-        scriptResults.forEach(s => s._source = 'script');
-        results.push(...scriptResults);
-      } catch (e) {
-        console.error('Script search error:', e);
-      }
+      labels.push({
+        name: 'script',
+        promise: ancientScripts.search(q, 'all', Math.ceil(limit / 3)).then((scriptResults) => ({
+          items: scriptResults.map((s) => ({ ...s, _source: 'script' })),
+          source: 'script',
+        })),
+      });
     }
-    
+
+    const settled = await Promise.allSettled(labels.map((l) => l.promise));
+    settled.forEach((task, i) => {
+      if (task.status === 'fulfilled') {
+        results.push(...task.value.items);
+      } else {
+        console.error(`${labels[i].name} search error:`, task.reason);
+      }
+    });
+
     const limited = results.slice(0, limit);
     
     if (redisClient.isReady && limited.length > 0) {

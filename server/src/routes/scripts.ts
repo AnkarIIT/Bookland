@@ -42,7 +42,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 // Browse by language
 router.get('/language/:lang', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const lang = req.params.lang;
+    const lang = String(req.params.lang);
     
     const results = await ancientScripts.browseByLanguage(lang, 50);
     res.json(results);
@@ -55,7 +55,7 @@ router.get('/language/:lang', async (req: Request, res: Response, next: NextFunc
 // Get specific script
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id;
+    const id = String(req.params.id);
     
     const script = await ancientScripts.getById(id);
     

@@ -16,12 +16,12 @@ interface CrossrefEntry {
   doi: string;
   title: string;
   authors: string[];
-  abstract?: string;
-  published_year?: number;
-  publisher?: string;
-  journal?: string;
-  pages?: string;
-  pdf_url?: string;
+  abstract?: string | null;
+  published_year?: number | null;
+  publisher?: string | null;
+  journal?: string | null;
+  pages?: string | null;
+  pdf_url?: string | null;
   license?: any[];
 }
 
