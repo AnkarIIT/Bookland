@@ -123,7 +123,7 @@ const BookDetailPage: React.FC = () => {
         
         {book.readable && (
           <Link
-            to={readUrl}
+            to={`/read/${book.read_kind}/${book.read_id}`}
             className="inline-flex items-center gap-1.5 text-sm font-semibold text-primary-600 dark:text-primary-400 hover:text-primary-700 dark:hover:text-primary-300 transition-colors"
           >
             <BookMarked size={16} /> Read
@@ -266,8 +266,5 @@ const BookDetailPage: React.FC = () => {
     </div>
   );
 };
-
-// Import Copy icon
-import { Copy } from 'lucide-react';
 
 export default BookDetailPage;
