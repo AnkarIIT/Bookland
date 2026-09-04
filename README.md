@@ -11,10 +11,13 @@ Bookland bridges the gap between massive book databases and a seamless user expe
 ## ✨ Key Features
 
 - **🔍 Global Book Search**: Instant search across millions of books using the Open Library API integration.
+- **🔎 Multi-Source Search**: Search across 12+ providers (OpenLibrary, Gutenberg, Internet Archive, Digital Library of India, Perseus, HathiTrust, Europeana, ManyBooks, OpenStax, LibreTexts, DOAB, SciELO) from one endpoint.
+- **📇 Source Directory**: A curated, searchable directory of 900+ free book, ebook, audiobook, comic, manga, paper, and academic resources organized into 37 categories.
+- **📄 Papers & Ancient Scripts**: Unified search over arXiv, CrossRef, Perseus, DLI, and more.
+- **👤 Accounts & Collections**: Reading history and saved-book collections with JWT auth.
 - **⚡ High-Performance Caching**: Optimized with **Redis** to ensure lightning-fast repeated searches.
 - **🗄️ Relational Persistence**: Built on **PostgreSQL** for reliable data management and future AI-driven insights (pgvector).
 - **🎨 Premium UI/UX**: A stunning, responsive frontend built with **React 18** and **Tailwind CSS**.
-- **🛠️ Developer-First Architecture**: Clean separation of concerns between `client`, `server`, and `infra`.
 
 ---
 
@@ -91,18 +94,33 @@ Bookland bridges the gap between massive book databases and a seamless user expe
 ## 🏗️ Project Structure
 
 - `client/`: React frontend application.
-- `server/`: Express backend API.
+- `server/`: Express + TypeScript API backend.
 - `infra/`: Infrastructure configuration (environment templates, Docker configs).
 - `docs/`: (Coming Soon) Detailed API and architecture documentation.
+
+---
+
+## 🚦 API Overview
+
+| Route | Description |
+|-------|-------------|
+| `GET /api/search` | Unified search across books, papers, and scripts |
+| `GET /api/all-sources` | Multi-source search across 12+ providers |
+| `GET /api/sources` | Source Directory (searchable, cached) |
+| `GET /api/papers`, `GET /api/scripts` | Paper / ancient-script sources |
+| `POST /api/auth/*` | Register, login, refresh, logout, me |
+| `GET/POST/DELETE /api/collections` | Saved book collections |
+| `GET/PATCH /api/history` | Reading history / progress |
 
 ---
 
 ## 🗺️ Roadmap
 
 - [x] Week 1: Core Search & Infrastructure MVP.
-- [x] Week 2: User Accounts & Personal Collections (accounts/auth shipped; collections pending).
-- [ ] Week 3: AI-Powered "What-If" Engine for book analysis.
-- [ ] Week 4: Google Drive Integration for personal ebook storage.
+- [x] Week 2: User Accounts & Personal Collections (auth, collections, reading history).
+- [x] Week 3: Multi-Source Search across 12+ providers + curated Source Directory.
+- [ ] Week 4: AI-Powered "What-If" Engine for book analysis.
+- [ ] Week 5: Google Drive Integration for personal ebook storage.
 
 ---
 
