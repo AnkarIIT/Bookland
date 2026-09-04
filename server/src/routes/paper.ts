@@ -15,7 +15,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
     }
     
     // Check cache
-    const cacheKey = \`papers:\${type}:\${query.toLowerCase()}\`;
+    const cacheKey = `papers:\${type}:\${query.toLowerCase()}`;
     if (redisClient.isReady) {
       const cached = await redisClient.get(cacheKey);
       if (cached) {
@@ -41,7 +41,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 // Get specific paper
 router.get('/:id', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const id = req.params.id;
+    const id = String(req.params.id);
     
     const paper = await papers.getById(id);
     
