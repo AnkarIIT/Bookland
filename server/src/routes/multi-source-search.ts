@@ -37,7 +37,7 @@ router.get('/', async (req: Request, res: Response, next: NextFunction) => {
 // Search specific source
 router.get('/:source', async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const source = req.params.source;
+    const source = String(req.params.source);
     const q = req.query.q as string;
     const limit = parseInt(req.query.limit as string) || 20;
     
@@ -50,10 +50,14 @@ router.get('/:source', async (req: Request, res: Response, next: NextFunction) =
       gutenberg: () => allSources.searchGutenberg(q),
       internet_archive: () => allSources.searchInternetArchive(q),
       digital_library_india: () => allSources.searchDLI(q),
-      perseus: async () => {
-        const results = await allSources.searchPerseus(q);
-        return results;
-      },
+      perseus: () => allSources.searchPerseus(q),
+      hathitrust: () => allSources.searchHathiTrust(q),
+      europeana: () => allSources.searchEuropeana(q),
+      manybooks: () => allSources.searchManyBooks(q),
+      openstax: () => allSources.searchOpenStax(q),
+      libretexts: () => allSources.searchLibreTexts(q),
+      doab: () => allSources.searchDOAB(q),
+      scielo: () => allSources.searchSciELO(q),
     };
     
     if (!sourceMap[source]) {
